@@ -1,2 +1,4 @@
 # Power-Dash
-## Data Visualizer
+### __Data Visualizer__
+# Team
+* ### Vicente Javier Viera Guízar | A01639784
