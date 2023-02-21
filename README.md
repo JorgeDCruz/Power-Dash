@@ -1,2 +1,2 @@
 # Power-Dash
-Data Visualizer
+## Data Visualizer
