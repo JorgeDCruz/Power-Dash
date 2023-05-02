@@ -17,6 +17,7 @@
     "@trpc/next": "^10.18.0",
     "@trpc/react-query": "^10.18.0",
     "@trpc/server": "^10.18.0",
+    "bcryptjs": "^2.4.3",
     "class-variance-authority": "^0.5.2",
     "clsx": "^1.2.1",
     "next": "^13.2.4",
