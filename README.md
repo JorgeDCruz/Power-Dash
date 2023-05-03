@@ -7,3 +7,6 @@
   + Jairo Barrera Hernández | A01276795
   + Jorge Plasencia Ahm Jorgensen |	A01637493
   + Siddhartha López Valenzuela	| A00227694
+
+## Comandos para ejecutar:
+- yarn dev
