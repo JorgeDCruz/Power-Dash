@@ -66,7 +66,7 @@ const GeneralInput = ({
     return false;
   };
   return (
-    <div className={`rounded bg-white p-2 shadow`}>
+    <>
       <label className={cn(`text-xs text-gray-400`, labelClassName)}>
         {label}
       </label>
@@ -119,7 +119,7 @@ const GeneralInput = ({
           })}
         />
       </div>
-    </div>
+    </>
   );
 };
 
