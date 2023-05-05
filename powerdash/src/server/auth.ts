@@ -4,10 +4,12 @@ import {
   type NextAuthOptions,
   type DefaultSession,
 } from "next-auth";
-import DiscordProvider from "next-auth/providers/discord";
+import CredentialsProvider from "next-auth/providers/credentials";
 import { PrismaAdapter } from "@next-auth/prisma-adapter";
 import { env } from "~/env.mjs";
 import { prisma } from "~/server/db";
+import { SupabaseAdapter } from "@next-auth/supabase-adapter";
+import * as process from "process";
 
 /**
  * Module augmentation for `next-login` types. Allows us to add custom properties to the `session`
@@ -30,37 +32,57 @@ declare module "next-auth" {
   // }
 }
 
-/**
- * Options for NextAuth.js used to configure adapters, providers, callbacks, etc.
- *
- * @see https://next-auth.js.org/configuration/options
- */
 export const authOptions: NextAuthOptions = {
+  //Especificamos la estrategía que utilizaremos para guardar los datos de la sesión
+  session: {
+    strategy: "jwt",
+  },
+  //Especificamos los proovedores que utilizaremos
+  providers: [
+    CredentialsProvider({
+      id: "credential-login",
+      name: "IBM Account",
+      type: "credentials",
+      //Las credenciales serán las siguientes:
+      credentials: {
+        email: {
+          label: "Email",
+          type: "email",
+          placeholder: "johnDoe@test.com",
+        },
+        password: { label: "Password", type: "password" },
+      },
+      //La función para autorizar un usuario es la siguiente
+      async authorize(credentials) {
+        const { email, password } = credentials as {
+          email: string;
+          password: string;
+        };
+
+        //Ahora mismo no es posible checar a la base de datos, pero aquí debería de ejecutarse la lógica, la cual es la siguiente:
+        if (email !== "A01634536@tec.mx" && password !== "123") {
+          return null;
+        }
+        return { id: "1", name: "Jorge Cruz", email: "A01634536@tec.mx" };
+      },
+    }),
+  ],
   callbacks: {
-    session({ session, user }) {
-      if (session.user) {
-        session.user.id = user.id;
-        // session.user.role = user.role; <-- put other properties on the session here
+    //Definimos el callback de un jwt para que cada vez que se cree un jwt guarde el id del usuario así como sus datos a través de una cookie
+    jwt: ({ token, user }) => {
+      if (user) {
+        token.id = user.id;
       }
-      return session;
+      return token;
     },
   },
   adapter: PrismaAdapter(prisma),
-  providers: [
-    DiscordProvider({
-      clientId: env.DISCORD_CLIENT_ID,
-      clientSecret: env.DISCORD_CLIENT_SECRET,
-    }),
-    /**
-     * ...add more providers here.
-     *
-     * Most other providers require a bit more work than the Discord provider. For example, the
-     * GitHub provider requires you to add the `refresh_token_expires_in` field to the Account
-     * model. Refer to the NextAuth.js docs for the provider you want to use. Example:
-     *
-     * @see https://next-auth.js.org/providers/github
-     */
-  ],
+
+  //Especificamos que ciertas funciones nos llevarán a ciertas vistas
+  pages: {
+    //Cuando se ejecute la función por defecto de signIn que ofrece Next-auth se redirigirá a la vista creada por nosotros
+    signIn: "/auth/signin",
+  },
 };
 
 /**
