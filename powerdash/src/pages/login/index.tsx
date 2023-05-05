@@ -54,7 +54,12 @@ const Index: NextPage = (): JSX.Element => {
           />
         </div>
 
-        <GeneralButton className={`mt-4`} type={`submit`}>
+        <GeneralButton
+          className={`mt-4`}
+          type={`submit`}
+          animated
+          style={`ghost`}
+        >
           Iniciar sesión
         </GeneralButton>
       </form>

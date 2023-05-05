@@ -8,6 +8,8 @@ import CredentialsProvider from "next-auth/providers/credentials";
 import { PrismaAdapter } from "@next-auth/prisma-adapter";
 import { env } from "~/env.mjs";
 import { prisma } from "~/server/db";
+import { SupabaseAdapter } from "@next-auth/supabase-adapter";
+import * as process from "process";
 
 /**
  * Module augmentation for `next-login` types. Allows us to add custom properties to the `session`
@@ -32,8 +34,8 @@ declare module "next-auth" {
 
 export const authOptions: NextAuthOptions = {
   //Especificamos la estrategía que utilizaremos para guardar los datos de la sesión
-  session:{
-    strategy: "jwt"
+  session: {
+    strategy: "jwt",
   },
   //Especificamos los proovedores que utilizaremos
   providers: [
@@ -43,37 +45,45 @@ export const authOptions: NextAuthOptions = {
       type: "credentials",
       //Las credenciales serán las siguientes:
       credentials: {
-          email: {label: "Email", type: "email", placeholder: "johnDoe@test.com"},
-          password: {label: "Password", type: "password"}
+        email: {
+          label: "Email",
+          type: "email",
+          placeholder: "johnDoe@test.com",
+        },
+        password: { label: "Password", type: "password" },
       },
       //La función para autorizar un usuario es la siguiente
-      async authorize(credentials){
-        const {email, password} = credentials as {email: string, password: string};
+      async authorize(credentials) {
+        const { email, password } = credentials as {
+          email: string;
+          password: string;
+        };
 
         //Ahora mismo no es posible checar a la base de datos, pero aquí debería de ejecutarse la lógica, la cual es la siguiente:
-        if(email !== "A01634536@tec.mx" && password !== "123"){
-            return null;
+        if (email !== "A01634536@tec.mx" && password !== "123") {
+          return null;
         }
-        return {id: "1", name: "Jorge Cruz", email: "A01634536@tec.mx"}
-      }
-    })
+        return { id: "1", name: "Jorge Cruz", email: "A01634536@tec.mx" };
+      },
+    }),
   ],
   callbacks: {
     //Definimos el callback de un jwt para que cada vez que se cree un jwt guarde el id del usuario así como sus datos a través de una cookie
-    jwt: ({token, user}) => {
-      if(user){
-        token.id = user.id
+    jwt: ({ token, user }) => {
+      if (user) {
+        token.id = user.id;
       }
       return token;
-    }
+    },
   },
   adapter: PrismaAdapter(prisma),
+
   //Especificamos que ciertas funciones nos llevarán a ciertas vistas
   pages: {
     //Cuando se ejecute la función por defecto de signIn que ofrece Next-auth se redirigirá a la vista creada por nosotros
-    signIn: "/auth/signin"
-  }
-}
+    signIn: "/auth/signin",
+  },
+};
 
 /**
  * Wrapper for `getServerSession` so that you don't need to import the `authOptions` in every file.
