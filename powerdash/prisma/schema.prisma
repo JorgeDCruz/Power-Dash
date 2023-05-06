@@ -30,6 +30,7 @@ model Employee {
 
 model Certification {
     employeeID            String    @id @default(uuid())
+    // The line comment is only fi is necesari
     // certificationID            String    @default(uuid())
     certificationName     String
     certificationProvider String?
@@ -77,10 +78,12 @@ model Session {
 
 model User {
     id            String    @id @default(cuid())
-    name          String?
-    email         String?   @unique
+    name          String
+    email         String    @unique
+    passport      String
     emailVerified DateTime?
     image         String?
+    createdAt     DateTime  @default(now())
     accounts      Account[]
     sessions      Session[]
 }
