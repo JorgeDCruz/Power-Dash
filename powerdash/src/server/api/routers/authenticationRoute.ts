@@ -29,6 +29,7 @@ export const authRouter = createTRPCRouter({
                 throw new Error('El correo electrónico ya está registrado');
             }
             // Crear nuevo usuario
+            
             const newUser = await createUSer({ email, password, name });
             return newUser;
         }),
