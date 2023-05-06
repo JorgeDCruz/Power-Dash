@@ -9,6 +9,9 @@ import { PrismaAdapter } from "@next-auth/prisma-adapter";
 import { env } from "~/env.mjs";
 import { prisma } from "~/server/db";
 import * as process from "process";
+import { PrismaClient } from "@prisma/client";
+
+const prismaDB = new PrismaClient();
 
 /**
  * Module augmentation for `next-login` types. Allows us to add custom properties to the `session`
@@ -57,7 +60,9 @@ export const authOptions: NextAuthOptions = {
           email: string;
           password: string;
         };
-
+        const existingUser = await prismaDB.user.findUnique({ where: { email } });
+        console.log("hola")
+        console.log(existingUser)
         //Ahora mismo no es posible checar a la base de datos, pero aquí debería de ejecutarse la lógica, la cual es la siguiente:
         if (email !== "A01634536@tec.mx" && password !== "123") {
           return null;
