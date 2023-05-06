@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
+    "cyOpen": "npx cypress open",
     "build": "next build",
     "dev": "next dev",
     "postinstall": "prisma generate",
@@ -17,6 +18,7 @@
     "@trpc/next": "^10.18.0",
     "@trpc/react-query": "^10.18.0",
     "@trpc/server": "^10.18.0",
+    "@types/bcryptjs": "^2.4.2",
     "bcryptjs": "^2.4.3",
     "class-variance-authority": "^0.5.2",
     "clsx": "^1.2.1",
@@ -25,6 +27,7 @@
     "react": "18.2.0",
     "react-div-100vh": "^0.7.0",
     "react-dom": "18.2.0",
+    "react-icons": "^4.8.0",
     "superjson": "1.12.2",
     "tailwind-merge": "^1.12.0",
     "zod": "^3.21.4"
@@ -38,6 +41,7 @@
     "@typescript-eslint/eslint-plugin": "^5.56.0",
     "@typescript-eslint/parser": "^5.56.0",
     "autoprefixer": "^10.4.14",
+    "cypress": "^12.11.0",
     "eslint": "^8.36.0",
     "eslint-config-next": "^13.2.4",
     "nodemon": "^2.0.22",

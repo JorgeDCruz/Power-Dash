@@ -15,9 +15,10 @@ const Main: NextPageWithLayout = () => {
         }}
       />
       <GeneralButton
-        style={`tertiary`}
-        size={`large`}
+        style={`ghost`}
+        size={`medium`}
         disabled={input.length < 3}
+        animated={true}
       >
         Hello
       </GeneralButton>

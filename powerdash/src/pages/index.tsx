@@ -1,14 +1,14 @@
 import { type NextPage } from "next";
 import Head from "next/head";
 import { signIn, signOut, useSession } from "next-auth/react";
-import { useRouter } from 'next/router';
+import { useRouter } from "next/router";
 import { useEffect } from "react";
 import { api } from "~/utils/api";
 
 const Home: NextPage = () => {
   const hello = api.example.hello.useQuery({ text: "from tRPC" });
-  //Obtenemos los datos de la sesión actual a través de next-auth "useSession"
-  const {data:session, status} = useSession();
+  //Obtenemos los datos de la sesión actual a través de next-login "useSession"
+  const { data: session, status } = useSession();
   console.log("session", session);
 
   const router = useRouter();
@@ -16,11 +16,11 @@ const Home: NextPage = () => {
   //Verificamos si el usuario esta verificado
   //Si no lo está se regresará a la siguiente pantalla
   useEffect(() => {
-    if(status == "unauthenticated") router.replace("/auth/signin");
+    if (status == "unauthenticated") router.replace("/login");
   }, [status]);
-  
+
   //Si lo está podrá ver la página
-  if(status == "authenticated"){
+  if (status == "authenticated") {
     return (
       <>
         <Head>
@@ -31,21 +31,21 @@ const Home: NextPage = () => {
         <main className="flex min-h-screen flex-col items-center justify-center ">
           <button className={`bg-red-300`}>hola</button>
           <div>
-            <p>
-              Bienvenido {session.user.name} !
-            </p>
-            <button onClick={() => {signOut()}}>Log Out</button>
+            <p>Bienvenido {session.user.name} !</p>
+            <button
+              onClick={() => {
+                signOut();
+              }}
+            >
+              Log Out
+            </button>
           </div>
         </main>
       </>
     );
   }
 
-  return (
-    <div>
-      Loading...
-    </div>
-  )  
+  return <div>Loading...</div>;
 };
 
 export default Home;
