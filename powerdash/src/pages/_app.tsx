@@ -18,11 +18,9 @@ const MyApp = ({
   // Default layout
   const getLayout = Component.getLayout || ((page) => page);
 
-  return (
-    <SessionProvider session={session}>
-      {getLayout(<Component {...pageProps} />)}
-    </SessionProvider>
-  );
+  const layout = getLayout(<Component {...pageProps} />);
+
+  return <SessionProvider session={session}>{layout}</SessionProvider>;
 };
 
 export default api.withTRPC(MyApp);
