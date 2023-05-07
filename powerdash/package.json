@@ -11,10 +11,15 @@
     "start": "next start"
   },
   "dependencies": {
+<<<<<<< HEAD
     "@next-auth/prisma-adapter": "^1.0.5",
     "@next-auth/supabase-adapter": "^0.2.1",
     "@prisma/client": "^4.11.0",
     "@supabase/supabase-js": "^2.21.0",
+=======
+    "@next-auth/prisma-adapter": "^1.0.6",
+    "@prisma/client": "^4.13.0",
+>>>>>>> 4f0dc97a3717072b04dfbc807ca5e3949a504521
     "@tanstack/react-query": "^4.28.0",
     "@trpc/client": "^10.18.0",
     "@trpc/next": "^10.18.0",
@@ -52,6 +57,10 @@
     "prettier-plugin-tailwindcss": "^0.2.6",
     "prisma": "^4.13.0",
     "tailwindcss": "^3.3.0",
+<<<<<<< HEAD
+=======
+    "ts-node": "^10.9.1",
+>>>>>>> 4f0dc97a3717072b04dfbc807ca5e3949a504521
     "typescript": "^5.0.4"
   },
   "ct3aMetadata": {
