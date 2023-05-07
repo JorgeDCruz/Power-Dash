@@ -1,6 +1,6 @@
 import { NextPage } from "next";
 import { signIn } from "next-auth/react";
-import { FormEventHandler, useState } from "react";
+import { FormEventHandler, FormHTMLAttributes, useState } from "react";
 import { useRouter } from "next/router";
 import Div100vh from "react-div-100vh";
 import { GeneralButton, GeneralInput } from "~/components";
@@ -13,14 +13,24 @@ const Index: NextPage = (): JSX.Element => {
   const router = useRouter();
   //Creamos variables para obtener los datos del form
   const [userInfo, setUserInfo] = useState({ email: "", password: "", name: ""});
-
   const { query } = useRouter();
-  const userQuery = api.auth.signUp.useQuery(userInfo)
 
+  
+
+  const mutation = api.auth.signUp.useMutation()
+
+  const handleSubmit: FormEventHandler<HTMLFormElement> = async (e) => {
+    const userEmail = userInfo.email
+    const userPass = userInfo.password
+    const userName = userInfo.name
+    e.preventDefault();
+    mutation.mutate(userInfo)
+  };
+  
   return (
     <Div100vh className="flex items-center justify-center bg-gradient-to-r from-sky-400 to-blue-500">
       <form
-        
+        onSubmit={handleSubmit}
         className={`flex flex-col items-center justify-center rounded-md bg-white p-10 shadow-xl`}
       >
         <h1 className={`mb-5 text-lg font-semibold leading-5 text-gray-900`}>

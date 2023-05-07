@@ -10,6 +10,7 @@ import { env } from "~/env.mjs";
 import { prisma } from "~/server/db";
 import * as process from "process";
 import { PrismaClient } from "@prisma/client";
+import helpers from "../utils/middleware/helpers"
 
 const prismaDB = new PrismaClient();
 
@@ -61,13 +62,15 @@ export const authOptions: NextAuthOptions = {
           password: string;
         };
         const existingUser = await prismaDB.user.findUnique({ where: { email } });
-        console.log("hola")
-        console.log(existingUser)
-        //Ahora mismo no es posible checar a la base de datos, pero aquí debería de ejecutarse la lógica, la cual es la siguiente:
-        if (email !== "A01634536@tec.mx" && password !== "123") {
-          return null;
+        
+        console.log(existingUser?.password)
+        if(existingUser !== null) {
+          const match = await helpers.matchPassword(password, existingUser.password)
+          if(match) {
+            return{id: existingUser.id, name:  existingUser.name, email: existingUser.email}
+          }
         }
-        return { id: "1", name: "Jorge Cruz", email: "A01634536@tec.mx" };
+        return null;
       },
     }),
   ],
@@ -85,7 +88,7 @@ export const authOptions: NextAuthOptions = {
   //Especificamos que ciertas funciones nos llevarán a ciertas vistas
   pages: {
     //Cuando se ejecute la función por defecto de signIn que ofrece Next-auth se redirigirá a la vista creada por nosotros
-    signIn: "/auth/signin",
+    signIn: "/login",
   },
 };
 
