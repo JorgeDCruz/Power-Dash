@@ -65,7 +65,7 @@ export const authOptions: NextAuthOptions = {
         
         console.log(existingUser?.password)
         if(existingUser !== null) {
-          const match = await helpers.matchPassword(password, existingUser.password)
+          const match = await helpers.matchPassword(password, existingUser.password || '')
           if(match) {
             return{id: existingUser.id, name:  existingUser.name, email: existingUser.email}
           }
