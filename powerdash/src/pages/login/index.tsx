@@ -1,15 +1,14 @@
-import { NextPage } from "next";
 import { signIn } from "next-auth/react";
 import { FormEventHandler, useState } from "react";
 import { useRouter } from "next/router";
 import Div100vh from "react-div-100vh";
-import { GeneralButton, GeneralInput } from "~/components";
+import { GeneralButton, GeneralInput, GeneralLayout } from "~/components";
+import { NextPageWithLayout } from "~/pages/page";
 
-const Index: NextPage = (): JSX.Element => {
-  const router = useRouter();
+const Login: NextPageWithLayout = (): JSX.Element => {
   //Creamos variables para obtener los datos del form
   const [userInfo, setUserInfo] = useState({ email: "", password: "" });
-
+  const router = useRouter();
   //Mandaremos los datos del form através de un handler
   const handleSubmit: FormEventHandler<HTMLFormElement> = async (e) => {
     e.preventDefault();
@@ -70,4 +69,18 @@ const Index: NextPage = (): JSX.Element => {
   );
 };
 
-export default Index;
+Login.getLayout = (page) => (
+  <GeneralLayout
+    userImage={`https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80`}
+    userJob={`Software Engineer`}
+    userName={`Jorge Plasencia`}
+  >
+    {page}
+  </GeneralLayout>
+);
+
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore
+export default Login;
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore
