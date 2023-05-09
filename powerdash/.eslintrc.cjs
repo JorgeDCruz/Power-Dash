@@ -31,6 +31,7 @@ const config = {
     "@typescript-eslint/no-unsafe-call": 0,
     "@typescript-eslint/restrict-template-expressions": 0,
     "@typescript-eslint/ban-types": 0,
+
   },
 };
 
