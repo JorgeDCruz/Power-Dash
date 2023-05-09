@@ -5,6 +5,8 @@
     "allowJs": true,
     "checkJs": true,
     "skipLibCheck": true,
+    "sourceMap": true,
+    "outDir": "dist",
     "strict": true,
     "forceConsistentCasingInFileNames": true,
     "noEmit": true,

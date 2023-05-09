@@ -1,12 +1,14 @@
 import { signIn } from "next-auth/react";
 import { FormEventHandler, useState } from "react";
+import { useRouter } from "next/router";
+import Div100vh from "react-div-100vh";
 import { GeneralButton, GeneralInput, GeneralLayout } from "~/components";
 import { NextPageWithLayout } from "~/pages/page";
 
 const Login: NextPageWithLayout = (): JSX.Element => {
   //Creamos variables para obtener los datos del form
   const [userInfo, setUserInfo] = useState({ email: "", password: "" });
-
+  const router = useRouter();
   //Mandaremos los datos del form através de un handler
   const handleSubmit: FormEventHandler<HTMLFormElement> = async (e) => {
     e.preventDefault();
@@ -24,7 +26,7 @@ const Login: NextPageWithLayout = (): JSX.Element => {
   };
 
   return (
-    <div className="flex h-screen items-center justify-center bg-gradient-to-r from-sky-400 to-blue-500">
+    <Div100vh className="flex items-center justify-center bg-gradient-to-r from-sky-400 to-blue-500">
       <form
         onSubmit={handleSubmit}
         className={`flex flex-col items-center justify-center rounded-md bg-white p-10 shadow-xl`}
@@ -60,7 +62,10 @@ const Login: NextPageWithLayout = (): JSX.Element => {
           Iniciar sesión
         </GeneralButton>
       </form>
-    </div>
+      <button onClick={() => router.push("/register")}>
+          Registro
+      </button>
+    </Div100vh>
   );
 };
 
