@@ -1,12 +1,9 @@
-import { NextPage } from "next";
 import { signIn } from "next-auth/react";
 import { FormEventHandler, useState } from "react";
-import { useRouter } from "next/router";
-import Div100vh from "react-div-100vh";
-import { GeneralButton, GeneralInput } from "~/components";
+import { GeneralButton, GeneralInput, GeneralLayout } from "~/components";
+import { NextPageWithLayout } from "~/pages/page";
 
-const Index: NextPage = (): JSX.Element => {
-  const router = useRouter();
+const Login: NextPageWithLayout = (): JSX.Element => {
   //Creamos variables para obtener los datos del form
   const [userInfo, setUserInfo] = useState({ email: "", password: "" });
 
@@ -27,7 +24,7 @@ const Index: NextPage = (): JSX.Element => {
   };
 
   return (
-    <Div100vh className="flex items-center justify-center bg-gradient-to-r from-sky-400 to-blue-500">
+    <div className="flex h-screen items-center justify-center bg-gradient-to-r from-sky-400 to-blue-500">
       <form
         onSubmit={handleSubmit}
         className={`flex flex-col items-center justify-center rounded-md bg-white p-10 shadow-xl`}
@@ -67,7 +64,22 @@ const Index: NextPage = (): JSX.Element => {
           Registro
       </button>
     </Div100vh>
+    </div>
   );
 };
 
-export default Index;
+Login.getLayout = (page) => (
+  <GeneralLayout
+    userImage={`https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80`}
+    userJob={`Software Engineer`}
+    userName={`Jorge Plasencia`}
+  >
+    {page}
+  </GeneralLayout>
+);
+
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore
+export default Login;
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore
