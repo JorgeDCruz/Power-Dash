@@ -24,7 +24,7 @@ const Login: NextPageWithLayout = (): JSX.Element => {
   };
 
   return (
-    <div className="flex items-center justify-center bg-gradient-to-r from-sky-400 to-blue-500">
+    <div className="flex h-screen items-center justify-center bg-gradient-to-r from-sky-400 to-blue-500">
       <form
         onSubmit={handleSubmit}
         className={`flex flex-col items-center justify-center rounded-md bg-white p-10 shadow-xl`}
