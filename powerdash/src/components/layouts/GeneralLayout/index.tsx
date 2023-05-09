@@ -122,7 +122,7 @@ const GeneralLayout = ({
         </div>
 
         <main className="lg:pl-72">
-          <Div100vh className="">{children}</Div100vh>
+          <Div100vh>{children}</Div100vh>
         </main>
       </div>
     </>
