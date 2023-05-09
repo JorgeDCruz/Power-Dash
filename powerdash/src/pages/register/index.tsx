@@ -6,7 +6,7 @@ import Div100vh from "react-div-100vh";
 import { GeneralButton, GeneralInput } from "~/components";
 import { AppRouter, appRouter } from "~/server/api/root";
 import { api } from "~/utils/api";
-
+import helpers from "~/utils/middleware/helpers";
 
 
 const Index: NextPage = (): JSX.Element => {
@@ -18,13 +18,12 @@ const Index: NextPage = (): JSX.Element => {
   
 
   const mutation = api.auth.signUp.useMutation()
-
+  
   const handleSubmit: FormEventHandler<HTMLFormElement> = async (e) => {
-    const userEmail = userInfo.email
-    const userPass = userInfo.password
-    const userName = userInfo.name
     e.preventDefault();
     mutation.mutate(userInfo)
+    console.log("Llegue aqui!")
+    router.push("/login")
   };
   
   return (
@@ -34,7 +33,7 @@ const Index: NextPage = (): JSX.Element => {
         className={`flex flex-col items-center justify-center rounded-md bg-white p-10 shadow-xl`}
       >
         <h1 className={`mb-5 text-lg font-semibold leading-5 text-gray-900`}>
-          Inicia sesión con tu cuenta de IBM
+          Crea tu cuenta
         </h1>
         <div className={`flex flex-col space-y-2`}>
           <GeneralInput
@@ -69,9 +68,12 @@ const Index: NextPage = (): JSX.Element => {
           animated
           style={`ghost`}
         >
-          Iniciar sesión
+          Crear cuenta
         </GeneralButton>
       </form>
+      <button onClick={() => router.push("/login")}>
+        Log In
+      </button>
     </Div100vh>
   );
 };

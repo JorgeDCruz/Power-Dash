@@ -19,7 +19,12 @@ type User = {
 }
 
 async function createUSer(data: any) {
-    console.log(data)
+    //console.log("Data: ", typeof data)
+    const validatedData = data
+    //validatedData.password = "TestPassword"
+    const hashPass = await helpers.encryptPassword(validatedData.password);
+    validatedData.password = hashPass;
+
     const user = await prisma.user.create({
         data,
     });
@@ -42,15 +47,16 @@ export const authRouter = createTRPCRouter({
             if (existingUser) {
                 throw new Error('El correo electrónico ya está registrado');
             }
+            
             // Crear nuevo usuario
             // TODO: implementando
-            // const hashPass = helpers.encryptPassword(input.password)
+            // 
             // const hashUser = {
             //     name: string,
             //     email: string,
             //     password: string
             // } 
-            // hashUser.name = input.name
+            
             const newUser = await createUSer(input);
             return newUser;
         }),
