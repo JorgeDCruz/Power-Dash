@@ -62,10 +62,8 @@ export const authOptions: NextAuthOptions = {
           password: string;
         };
         const existingUser = await prismaDB.user.findUnique({ where: { email } });
-        
-        console.log(existingUser?.password)
         if(existingUser !== null) {
-          const match = await helpers.matchPassword(password, existingUser.password)
+          const match = await helpers.matchPassword(password, existingUser.password || '')
           if(match) {
             return{id: existingUser.id, name:  existingUser.name, email: existingUser.email}
           }

@@ -63,6 +63,9 @@ const Index: NextPage = (): JSX.Element => {
           Iniciar sesión
         </GeneralButton>
       </form>
+      <button onClick={() => router.push("/register")}>
+          Registro
+      </button>
     </Div100vh>
   );
 };
