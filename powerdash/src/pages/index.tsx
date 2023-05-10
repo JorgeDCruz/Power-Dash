@@ -1,9 +1,10 @@
-import { handleCSV } from "~/utils/functions";
+// import { handleCSV } from "~/utils/functions";
 import { type NextPage } from "next";
 import Head from "next/head";
 import { signIn, signOut, useSession } from "next-auth/react";
 import { useRouter } from "next/router";
 import { useEffect } from "react";
+import { ChangeEvent } from "react";
 import { api } from "~/utils/api";
 
 const Home: NextPage = () => {
@@ -12,13 +13,31 @@ const Home: NextPage = () => {
   console.log("session", session);
 
   const router = useRouter();
-
+  const mutation = api.CSV.CSV_Upload.useMutation();
   //Verificamos si el usuario esta verificado
   //Si no lo está se regresará a la siguiente pantalla
   useEffect(() => {
     if (status == "unauthenticated") router.replace("/login");
   }, [status]);
 
+  const handleCSV = (e: ChangeEvent<HTMLInputElement>): void => {
+    const input: FileList | null = e.target.files;
+    
+    if(input !== null){
+        const file: File | undefined = input[0];
+        var text: string;
+
+        const reader = new FileReader();
+        reader.onload = (e: ProgressEvent<FileReader>): void => {
+            text = e.target?.result as string;
+            mutation.mutate(text);
+
+            return;
+        };
+        reader.readAsText((file !== undefined)? file : new Blob);
+    }
+    return;
+}
   //Si lo está podrá ver la página
   if (status == "authenticated") {
     return (
