@@ -1,4 +1,4 @@
-import { ChangeEvent } from "react";
+import { handleCSV } from "~/utils/functions";
 import { type NextPage } from "next";
 import Head from "next/head";
 import { signIn, signOut, useSession } from "next-auth/react";
@@ -7,29 +7,6 @@ import { useEffect } from "react";
 import { api } from "~/utils/api";
 
 const Home: NextPage = () => {
-  type txt = 
-    string
-    | ArrayBuffer
-    | null 
-    | undefined;
-
-  const handleCSV = (e: ChangeEvent<HTMLInputElement>): txt => {
-    const input: FileList | null = e.target.files;
-    
-    if(input != null){
-      const file: File | undefined = input[0];
-      var text: txt;
-
-      const reader = new FileReader();
-
-      reader.onload = (e: ProgressEvent<FileReader>): txt => text = e.target?.result;
-      
-      reader.readAsText((file != undefined)? file : new Blob);
-    }
-
-    return text;
-  }
-  
   //Obtenemos los datos de la sesión actual a través de next-login "useSession"
   const { data: session, status } = useSession();
   console.log("session", session);
