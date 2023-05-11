@@ -38,7 +38,7 @@ async function separateCSV(data: string){
   //Hay que separar los datos de work_location para poderlo subir a la DB
   const parsedData:ParseResult<employee>  = Papa.parse(data, config);
   
-  let size = parsedData.data.length;
+  let size: number = parsedData.data.length;
   let prismaInsert;
 
   for(let i = 0; i < size; i++){
@@ -57,12 +57,12 @@ async function separateCSV(data: string){
 
     prismaInsert = await prisma.certification.create({
       data:{
-        employeeID: parsedData.data[i]?.employeeID as string,
-        certificationName: parsedData.data[i]?.certificationName as string,
-        expirationDate: new Date(parsedData.data[i]?.expirationDate as string),
-        certificationType: parsedData.data[i]?.certificationType as string,
+        employeeID: <string>parsedData.data[i]?.employeeID,
+        certificationName: <string>parsedData.data[i]?.certificationName,
+        expirationDate: new Date(<string>parsedData.data[i]?.expirationDate),
+        certificationType: <string>parsedData.data[i]?.certificationType,
         marketCertification: false,
-        employeeId: parsedData.data[i]?.employeeID as string
+        employeeId: <string>parsedData.data[i]?.employeeID
       }
     })
 
