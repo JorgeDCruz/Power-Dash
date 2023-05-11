@@ -1,7 +1,7 @@
 // import { handleCSV } from "~/utils/functions";
 import { type NextPage } from "next";
 import Head from "next/head";
-import { signIn, signOut, useSession } from "next-auth/react";
+import { useSession } from "next-auth/react";
 import { useRouter } from "next/router";
 import { useEffect } from "react";
 import { ChangeEvent } from "react";
@@ -25,14 +25,13 @@ const Home: NextPage = () => {
     
     if(input !== null){
         const file: File | undefined = input[0];
-        var text: string;
+        let text: string;
 
         const reader = new FileReader();
         reader.onload = (e: ProgressEvent<FileReader>): void => {
-            text = e.target?.result as string;
-            mutation.mutate(text);
-
-            return;
+          text = e.target?.result as string;
+          mutation.mutate(text);
+          return;
         };
         reader.readAsText((file !== undefined)? file : new Blob);
     }

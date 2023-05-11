@@ -15,7 +15,7 @@ async function createUSer(data: any) {
     const validatedData = data
     const hashPass = await helpers.encryptPassword(validatedData.password);
     validatedData.password = hashPass;
-
+    console.log("d: ", data)
     const user = await prisma.user.create({
         data,
     });
