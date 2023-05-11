@@ -1,7 +1,11 @@
 import cn from "~/utils/classNames";
 import { cva } from "class-variance-authority";
 import { useState } from "react";
-import { AiFillEye, AiFillEyeInvisible } from "react-icons/ai";
+import {
+  AiFillEye,
+  AiFillEyeInvisible,
+  AiOutlineCloudUpload,
+} from "react-icons/ai";
 
 interface GeneralInputProps {
   label?: string;
@@ -10,11 +14,11 @@ interface GeneralInputProps {
   inputClassName?: string;
   RightIcon?: JSX.Element;
   RightIconAction?: () => void;
-  type?: "text" | "password" | "number" | "email";
+  type?: "text" | "password" | "number" | "email" | "file";
   onFocus?: () => void;
   onBlur?: () => void;
-  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
-  value: string;
+  onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  value?: string;
   placeholder?: string;
 }
 
@@ -29,6 +33,7 @@ const GeneralInputStyles = cva(
         password: [],
         number: ["pr-2"],
         email: [],
+        file: ["hidden"],
       },
     },
   }
@@ -80,6 +85,7 @@ const GeneralInput = ({
                   : "password"
                 : type
             }
+            id={type === "file" ? "file" : undefined}
             className={cn(GeneralInputStyles({ type: type }), inputClassName)}
             onFocus={handleFocus}
             onBlur={handleBlur}
@@ -87,6 +93,26 @@ const GeneralInput = ({
             onChange={onChange}
             placeholder={placeholder}
           />
+          {type === "file" && (
+            <label
+              htmlFor={"file"}
+              className={cn(
+                "duration-250 flex w-full items-center justify-center rounded-full border bg-blue-50 py-2 transition-all",
+                "cursor-pointer hover:bg-blue-100 active:bg-blue-200"
+              )}
+            >
+              <>
+                <AiOutlineCloudUpload className={`h-5 w-5`} />
+                <span
+                  className={cn(`ml-2
+                  text-xl font-light text-gray-900 
+                `)}
+                >
+                  Upload
+                </span>
+              </>
+            </label>
+          )}
           {type !== "number" && (
             <button
               type={"button"}
@@ -116,6 +142,7 @@ const GeneralInput = ({
           className={cn(`duration-250 mt-1 w-full border-b transition-all`, {
             "border-gray-200": !isFocused,
             "border-gray-400": isFocused,
+            hidden: type === "file",
           })}
         />
       </div>
