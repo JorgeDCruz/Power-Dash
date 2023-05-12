@@ -11,30 +11,30 @@ import {signOut} from "next-auth/react";
 const Home: NextPage = () => {
   //Obtenemos los datos de la sesión actual a través de next-login "useSession"
   const { data: session, status } = useSession();
-  console.log("session", session);
+  //console.log("session", session);
 
   const router = useRouter();
   const mutation = api.CSV.CSV_Upload.useMutation();
-  //Verificamos si el usuario esta verificado
-  //Si no lo está se regresará a la siguiente pantalla
+
 
   const handleCSV = (e: ChangeEvent<HTMLInputElement>): void => {
     const input: FileList | null = e.target.files;
-    
     if(input !== null){
-        const file: File | undefined = input[0];
-        let text: string;
+      const file: File | undefined = input[0];
+      let text: string;
 
-        const reader = new FileReader();
-        reader.onload = (e: ProgressEvent<FileReader>): void => {
-          text = e.target?.result as string;
-          mutation.mutate(text);
-          return;
-        };
-        reader.readAsText((file !== undefined)? file : new Blob);
+      const reader = new FileReader();
+      reader.onload = (e: ProgressEvent<FileReader>): void => {
+        text = e.target?.result as string;
+        mutation.mutate(text);
+        console.log("Success")
+        return;
+      };
+      reader.readAsText((file !== undefined)? file : new Blob);
     }
     return;
-}
+  }
+  
   return (
     <>
       <Head>
