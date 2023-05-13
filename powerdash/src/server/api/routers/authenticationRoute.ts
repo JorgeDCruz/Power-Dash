@@ -1,16 +1,9 @@
-import { string, z } from "zod";
+import { z } from "zod";
 import { createTRPCRouter, publicProcedure } from "~/server/api/trpc";
 import { PrismaClient } from "@prisma/client";
-import { object } from "prop-types";
 import helpers from "~/utils/middleware/helpers";
 
 const prisma = new PrismaClient();
-
-// const userSchema = z.object({
-//     email: z.string().email(),
-//     password: z.string().min(8),
-//     name: z.string(),
-// });
 
 type User = {
     email: string,
@@ -19,12 +12,10 @@ type User = {
 }
 
 async function createUSer(data: any) {
-    //console.log("Data: ", typeof data)
     const validatedData = data
-    //validatedData.password = "TestPassword"
     const hashPass = await helpers.encryptPassword(validatedData.password);
     validatedData.password = hashPass;
-
+    console.log("d: ", data)
     const user = await prisma.user.create({
         data,
     });
@@ -37,7 +28,7 @@ export const authRouter = createTRPCRouter({
         .input(z.object({
             email: z.string().email(),
             password: z.string().min(8),
-            name: z.string(),
+            name: z.string()
         }))
         .mutation(async (req) => {
             const { input } = req;
@@ -48,16 +39,7 @@ export const authRouter = createTRPCRouter({
                 throw new Error('El correo electrónico ya está registrado');
             }
             
-            // Crear nuevo usuario
-            // TODO: implementando
-            // 
-            // const hashUser = {
-            //     name: string,
-            //     email: string,
-            //     password: string
-            // } 
-            
             const newUser = await createUSer(input);
             return newUser;
-        }),
+        })
 });

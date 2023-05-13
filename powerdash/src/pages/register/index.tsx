@@ -13,7 +13,6 @@ const Index: NextPage = (): JSX.Element => {
   const router = useRouter();
   //Creamos variables para obtener los datos del form
   const [userInfo, setUserInfo] = useState({ email: "", password: "", name: ""});
-  const { query } = useRouter();
 
   
 

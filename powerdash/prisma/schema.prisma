@@ -15,7 +15,8 @@ datasource db {
 }
 
 model Employee {
-    employeeID           String          @id @default(uuid())
+    id                   String          @id @default(uuid())
+    employeeID           String          @unique
     employeeName         String?
     employeeCountry      String
     employeeState        String
@@ -29,7 +30,7 @@ model Employee {
 }
 
 model Certification {
-    employeeID            String    @id @default(uuid())
+    id                    String    @id @default(uuid())
     // The line comment is only fi is necesari
     // certificationID            String    @default(uuid())
     certificationName     String
@@ -38,8 +39,8 @@ model Certification {
     certificationType     String?
     expirationDate        DateTime?
     marketCertification   Boolean   @default(false)
+    obtainedBy            Employee  @relation(fields: [employeeId], references: [id])
     employeeId            String
-    obtainedBy            Employee  @relation(fields: [employeeId], references: [employeeID])
     // @@id([employeeId, certificationID])
 }
 
