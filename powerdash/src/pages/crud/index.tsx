@@ -21,7 +21,7 @@ const Crud: NextPageWithLayout = (): JSX.Element => {
         // technologies: "",
     })
 
-    const mutation = crudRouter.addEmployee
+    // const mutation = crudRouter.addEmployee()
 
     const handleSubmit: FormEventHandler<HTMLFormElement> = async (e) => {
         e.preventDefault();

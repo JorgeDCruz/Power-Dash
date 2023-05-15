@@ -39,8 +39,8 @@ model Certification {
     certificationType     String?
     expirationDate        DateTime?
     marketCertification   Boolean   @default(false)
-    employeeId            String
     obtainedBy            Employee  @relation(fields: [employeeId], references: [id])
+    employeeId            String
     // @@id([employeeId, certificationID])
 }
 

@@ -29,7 +29,7 @@ async function updateEmployee(employeeID: string, data: z.input<typeof updateEmp
 
 
 export const crudRouter = createTRPCRouter({
-    addEmployee: protectedProcedure
+    addEmployee: publicProcedure
         .input(updateEmployeeSchema)
         .mutation(async (req) => {
             const { input } = req;
