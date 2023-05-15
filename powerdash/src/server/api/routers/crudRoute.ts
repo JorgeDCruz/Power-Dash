@@ -1,84 +1,87 @@
-import { string, z } from "zod";
+import { z } from "zod";
 import { createTRPCRouter, publicProcedure, protectedProcedure } from "~/server/api/trpc";
 import { PrismaClient } from "@prisma/client";
 
 
+
 const prisma = new PrismaClient();
 
-interface CertificationInterface {
-    certificationName: string
-    certificationProvider?: string
-    certificationStatus?: boolean
-    certificationType?: string
-    expirationDate?: string
-}
+const updateEmployeeSchema = z.object({
+    employeeID: z.string(),
+    employeeName: z.string().optional(),
+    employeeCountry: z.string(),
+    employeeState: z.string(),
+    employeeCity: z.string(),
+    yearsXP: z.number().optional(),
+    employeePosition: z.string().optional(),
+    employeeArea: z.string(),
+    programmingLanguages: z.array(z.string()).optional(),
+    technologies: z.array(z.string()).optional(),
+});
 
-interface EmployeeInterface {
-    employeeName: string;
-    employeeCountry: string; 
-    employeeState: string;
-    employeeCity: string;
-    yearsXP?: number; 
-    employeePosition?: string;     
-    employeeArea: string;
-    programmingLanguages: string[]
-    technologies:         string[]
-    certifications?: CertificationInterface[]
-}
-
-
-
-async function createEmployee(_dataEmployee: EmployeeInterface) {
-    const employee = await prisma.employee.create({
-        data: {
-            employeeName: _dataEmployee.employeeName, 
-            employeeCountry: _dataEmployee.employeeCountry,
-            employeeState: _dataEmployee.employeeState,
-            employeeCity: _dataEmployee.employeeCity,
-            yearsXP: _dataEmployee.yearsXP,   
-            employeePosition: _dataEmployee.employeePosition,    
-            employeeArea: _dataEmployee.employeeArea,
-            programmingLanguages: _dataEmployee.programmingLanguages,
-            technologies: _dataEmployee.technologies
-        }
-    })
-    console.log(employee);
-    return employee
-}
-
-async function readEmployee(_idEmployee?: string | null) {
-    if(_idEmployee) {
-        const employee = await prisma.employee.findUnique({ where: {employeeID: _idEmployee}})
-        console.log(readEmployee);
-        return employee;
-    }
-    const employees = await prisma.employee.findMany()
-    console.log(employees);
-    return employees;
-}
-
-async function updateEmployee(_newDataEmp: any, _idEmployee: string) {
-    const updatedEmp = await prisma.employee.update({
-        where: { employeeID: _idEmployee },
-        data: _newDataEmp
+async function updateEmployee(employeeID: string, data: z.input<typeof updateEmployeeSchema>) {
+    return await prisma.employee.update({
+        where: { employeeID },
+        data,
     });
 }
 
+
+
 export const crudRouter = createTRPCRouter({
     addEmployee: protectedProcedure
-    // TODO: verificar cuales son nullos y especificarlo
-        .input(z.object({
-            name: z.string(),
-            country: z.string(),
-            state: z.string(),
-            city: z.string(),
-            yearsXp: z.string(),
-            position: z.string(),
-            area: z.string(),
-            programLang: z.array(z.string()),
-            technologies: z.array(z.string()),
-        }))
+        .input(updateEmployeeSchema)
         .mutation(async (req) => {
             const { input } = req;
+            const empID = input.employeeID
+
+            const existingEmployee = await prisma.employee.findUnique({where: {employeeID: empID}});
+            if (existingEmployee) {
+                throw new Error('Ya existe el empleado');
+            }
+            
+            const newEmployee = await prisma.employee.create({
+                data: {
+                    employeeID: input.employeeID,
+                    employeeName: input.employeeName,
+                    employeeCountry: input.employeeCountry,
+                    employeeState: input.employeeState,
+                    employeeCity: input.employeeCity,
+                    yearsXP: input.yearsXP,
+                    employeePosition: input.employeePosition,     
+                    employeeArea: input.employeeArea,
+                    programmingLanguages: input.programmingLanguages,
+                    technologies: input.technologies,
+                }
+            })
+            console.log(newEmployee);
+            return newEmployee;
+        }),
+    readEmployee: protectedProcedure
+        .input(z.string().optional())
+        .query(async ({input}) => {
+            if(input) {
+                const employee = await prisma.employee.findUnique({ where: {employeeID: input}})
+                console.log(employee);
+                return employee;
+            }
+            const employees = await prisma.employee.findMany()
+            console.log(employees);
+            return employees;
+        }),
+    updateEmployee: protectedProcedure
+        .input(updateEmployeeSchema)
+        .mutation(async (input) => {
+            const { ...data } = updateEmployeeSchema.parse(input);
+            return await updateEmployee(data.employeeID, data)
+        }),
+    deleteEmployee: protectedProcedure
+        .input(z.string())
+        .mutation(async ({input}) => {
+            const deleteEmp = await prisma.employee.delete({
+                where:{
+                    employeeID: input
+                },
+            })
         }),
 })

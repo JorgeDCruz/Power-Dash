@@ -39,6 +39,11 @@ const Home: NextPage = () => {
             >
               Log Out
             </button>
+            <button 
+              onClick={() => {
+              router.push("/crud")
+            }}
+            >CRUD</button>
           </div>
         </main>
       </>
