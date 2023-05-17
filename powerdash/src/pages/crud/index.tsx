@@ -4,8 +4,7 @@ import { useRouter } from "next/router";
 import Div100vh from "react-div-100vh";
 import { GeneralButton, GeneralInput, GeneralLayout } from "~/components";
 import { NextPageWithLayout } from "~/pages/page";
-import { number } from "zod";
-import { crudRouter } from "~/server/api/routers/crudRoute";
+import { api } from "~/utils/api";
 
 const Crud: NextPageWithLayout = (): JSX.Element => {
     const [ crudInfo, setCrudInfo] = useState({
@@ -21,11 +20,11 @@ const Crud: NextPageWithLayout = (): JSX.Element => {
         // technologies: "",
     })
 
-    // const mutation = crudRouter.addEmployee()
+    const mutation = api.CRUDrouter.addEmployee.useMutation()
 
     const handleSubmit: FormEventHandler<HTMLFormElement> = async (e) => {
         e.preventDefault();
-        // mutation
+        mutation.mutate(crudInfo)
         // console.log("Llegue aqui!")
         // router.push("/login")
     };

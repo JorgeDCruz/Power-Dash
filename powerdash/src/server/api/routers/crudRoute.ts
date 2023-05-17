@@ -6,7 +6,7 @@ import { PrismaClient } from "@prisma/client";
 
 const prisma = new PrismaClient();
 
-const updateEmployeeSchema = z.object({
+const employeeSchema = z.object({
     employeeID: z.string(),
     employeeName: z.string().optional(),
     employeeCountry: z.string(),
@@ -19,7 +19,8 @@ const updateEmployeeSchema = z.object({
     technologies: z.array(z.string()).optional(),
 });
 
-async function updateEmployee(employeeID: string, data: z.input<typeof updateEmployeeSchema>) {
+
+async function updateEmployee(employeeID: string, data: z.input<typeof employeeSchema>) {
     return await prisma.employee.update({
         where: { employeeID },
         data,
@@ -30,7 +31,7 @@ async function updateEmployee(employeeID: string, data: z.input<typeof updateEmp
 
 export const crudRouter = createTRPCRouter({
     addEmployee: publicProcedure
-        .input(updateEmployeeSchema)
+        .input(employeeSchema)
         .mutation(async (req) => {
             const { input } = req;
             const empID = input.employeeID
@@ -70,9 +71,9 @@ export const crudRouter = createTRPCRouter({
             return employees;
         }),
     updateEmployee: protectedProcedure
-        .input(updateEmployeeSchema)
+        .input(employeeSchema)
         .mutation(async (input) => {
-            const { ...data } = updateEmployeeSchema.parse(input);
+            const { ...data } = employeeSchema.parse(input);
             return await updateEmployee(data.employeeID, data)
         }),
     deleteEmployee: protectedProcedure
