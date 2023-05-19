@@ -1,3 +1,2 @@
-import GeneralButton from "~/components/buttons/GeneralButton";
-
-export { GeneralButton };
+import { Button } from "~/components/buttons/Button";
+export { Button };

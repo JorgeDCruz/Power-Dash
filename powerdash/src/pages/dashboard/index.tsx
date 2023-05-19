@@ -1,9 +1,7 @@
 import { NextPageWithLayout } from "~/pages/page";
 import Div100vh from "react-div-100vh";
-import { GeneralButton } from "~/components/buttons";
 import { useState } from "react";
-import { GeneralLayout } from "~/components";
-import Login from "~/pages/login";
+import { Button, GeneralLayout } from "~/components";
 
 const Dashboard: NextPageWithLayout = () => {
   const [input, setInput] = useState<string>("");
@@ -16,14 +14,9 @@ const Dashboard: NextPageWithLayout = () => {
           setInput(e.target.value);
         }}
       />
-      <GeneralButton
-        style={`ghost`}
-        size={`medium`}
-        disabled={input.length < 3}
-        animated={true}
-      >
+      <Button variant={`ghost`} disabled={input.length < 3}>
         Hello
-      </GeneralButton>
+      </Button>
     </Div100vh>
   );
 };

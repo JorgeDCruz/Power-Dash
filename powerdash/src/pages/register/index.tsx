@@ -1,30 +1,28 @@
 import { NextPage } from "next";
-import { signIn } from "next-auth/react";
 import { FormEventHandler, FormHTMLAttributes, useState } from "react";
 import { useRouter } from "next/router";
 import Div100vh from "react-div-100vh";
-import { GeneralButton, GeneralInput } from "~/components";
-import { AppRouter, appRouter } from "~/server/api/root";
 import { api } from "~/utils/api";
-import helpers from "~/utils/middleware/helpers";
-
+import { Button, Input } from "~/components";
 
 const Index: NextPage = (): JSX.Element => {
   const router = useRouter();
   //Creamos variables para obtener los datos del form
-  const [userInfo, setUserInfo] = useState({ email: "", password: "", name: ""});
+  const [userInfo, setUserInfo] = useState({
+    email: "",
+    password: "",
+    name: "",
+  });
 
-  
+  const mutation = api.auth.signUp.useMutation();
 
-  const mutation = api.auth.signUp.useMutation()
-  
   const handleSubmit: FormEventHandler<HTMLFormElement> = async (e) => {
     e.preventDefault();
-    mutation.mutate(userInfo)
-    console.log("Llegue aqui!")
-    router.push("/login")
+    mutation.mutate(userInfo);
+    console.log("Llegue aqui!");
+    router.push("/login");
   };
-  
+
   return (
     <Div100vh className="flex items-center justify-center bg-gradient-to-r from-sky-400 to-blue-500">
       <form
@@ -35,7 +33,7 @@ const Index: NextPage = (): JSX.Element => {
           Crea tu cuenta
         </h1>
         <div className={`flex flex-col space-y-2`}>
-          <GeneralInput
+          <Input
             value={userInfo.email}
             onChange={({ target }) =>
               setUserInfo({ ...userInfo, email: target.value })
@@ -43,7 +41,7 @@ const Index: NextPage = (): JSX.Element => {
             type="email"
             placeholder="email@gmail.com"
           />
-          <GeneralInput
+          <Input
             value={userInfo.password}
             onChange={({ target }) =>
               setUserInfo({ ...userInfo, password: target.value })
@@ -51,7 +49,7 @@ const Index: NextPage = (): JSX.Element => {
             type="password"
             placeholder="********"
           />
-          <GeneralInput
+          <Input
             value={userInfo.name}
             onChange={({ target }) =>
               setUserInfo({ ...userInfo, name: target.value })
@@ -61,18 +59,11 @@ const Index: NextPage = (): JSX.Element => {
           />
         </div>
 
-        <GeneralButton
-          className={`mt-4`}
-          type={`submit`}
-          animated
-          style={`ghost`}
-        >
+        <Button className={`mt-4`} type={`submit`} variant={`ghost`}>
           Crear cuenta
-        </GeneralButton>
+        </Button>
       </form>
-      <button onClick={() => router.push("/login")}>
-        Log In
-      </button>
+      <button onClick={() => router.push("/login")}>Log In</button>
     </Div100vh>
   );
 };

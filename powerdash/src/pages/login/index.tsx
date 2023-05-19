@@ -2,8 +2,11 @@ import { signIn } from "next-auth/react";
 import { FormEventHandler, useState } from "react";
 import { useRouter } from "next/router";
 import Div100vh from "react-div-100vh";
-import { GeneralButton, GeneralInput, GeneralLayout } from "~/components";
+import { GeneralLayout } from "~/components";
 import { NextPageWithLayout } from "~/pages/page";
+import { Button } from "~/components/buttons";
+import { Input } from "~/components/inputs/Input";
+import { Card } from "~/components/cards/Card";
 
 const Login: NextPageWithLayout = (): JSX.Element => {
   //Creamos variables para obtener los datos del form
@@ -27,44 +30,40 @@ const Login: NextPageWithLayout = (): JSX.Element => {
 
   return (
     <Div100vh className="flex items-center justify-center bg-gradient-to-r from-sky-400 to-blue-500">
-      <form
-        onSubmit={handleSubmit}
-        className={`flex flex-col items-center justify-center rounded-md bg-white p-10 shadow-xl`}
-      >
-        <h1 className={`mb-5 text-lg font-semibold leading-5 text-gray-900`}>
-          Inicia sesión con tu cuenta de IBM
-        </h1>
-        <div className={`flex flex-col space-y-2`}>
-          <GeneralInput
-            value={userInfo.email}
-            onChange={({ target }) =>
-              setUserInfo({ ...userInfo, email: target.value })
-            }
-            type="email"
-            placeholder="email@gmail.com"
-          />
-          <GeneralInput
-            value={userInfo.password}
-            onChange={({ target }) =>
-              setUserInfo({ ...userInfo, password: target.value })
-            }
-            type="password"
-            placeholder="********"
-          />
-        </div>
-
-        <GeneralButton
-          className={`mt-4`}
-          type={`submit`}
-          animated
-          style={`ghost`}
+      <Card>
+        <form
+          onSubmit={handleSubmit}
+          className={`flex flex-col items-center justify-center p-10`}
         >
-          Iniciar sesión
-        </GeneralButton>
-      </form>
-      <button onClick={() => router.push("/register")}>
-          Registro
-      </button>
+          <h1 className={`mb-5 text-lg font-semibold leading-5 text-gray-900`}>
+            Inicia sesión con tu cuenta de IBM
+          </h1>
+          <div className={`flex flex-col space-y-2`}>
+            <Input
+              value={userInfo.email}
+              onChange={({ target }) =>
+                setUserInfo({ ...userInfo, email: target.value })
+              }
+              type="email"
+              placeholder="email@gmail.com"
+            />
+            <Input
+              value={userInfo.password}
+              onChange={({ target }) =>
+                setUserInfo({ ...userInfo, password: target.value })
+              }
+              type="password"
+              placeholder="********"
+            />
+          </div>
+
+          <Button className={`mt-4`} type={`submit`}>
+            Iniciar sesión
+          </Button>
+        </form>
+      </Card>
+
+      <button onClick={() => router.push("/register")}>Registro</button>
     </Div100vh>
   );
 };
