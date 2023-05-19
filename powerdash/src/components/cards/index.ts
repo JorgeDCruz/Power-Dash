@@ -1,2 +1,2 @@
-import GeneralCard from "~/components/cards/GeneralCard";
-export { GeneralCard };
+import { Card } from "~/components/cards/Card";
+export { Card };
