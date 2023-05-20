@@ -1,4 +1,12 @@
-import { FC, useState, useRef } from "react";
+import { 
+    FC,
+    useState,
+    useRef,
+    SyntheticEvent,
+    Dispatch,
+    SetStateAction,
+    FormEvent,
+    Fragment } from "react";
 import { GeneralButton } from "~/components";
 import { SearchIcon } from "~/assets";
 import { useClickOutside } from "~/hooks";
@@ -8,44 +16,63 @@ const Line: FC<{className?: string | undefined}> = ({className}): JSX.Element =>
 
 interface SearchbarProps {
     className?: string | undefined;
+    searchTopics: string[];
+    setTopic: Dispatch<SetStateAction<string>>;
 }
 
-const Searchbar: FC<SearchbarProps> = ({className}): JSX.Element => {
+const Searchbar: FC<SearchbarProps> = ({className, searchTopics, setTopic}): JSX.Element => {
     const [search, setSearch] = useState<boolean>(false);
+    const [searchText, setSearchText] = useState<string>("");
     const ref = useRef<HTMLInputElement>(null);
     useClickOutside(ref, () => setSearch(prev => !prev));
 
-    const test = ["AWAaaaaaaaa", "OWO", "UWU", "7U7", "UNU", "T_T", ":3", "EWE",]
-    const topicsLenght: number = test.length;
+    const topicsLenght: number = searchTopics.length;
+
+    const handleSubmit = (e: SyntheticEvent): void => {
+        e.preventDefault();
+
+        console.log("OLA")
+    }
+
+    const handleChange = (e: FormEvent<HTMLInputElement>): void => {
+        setSearchText(e.currentTarget.value);
+        setTopic(e.currentTarget.value);
+    }
 
     return(
         <div
             className={cn([`
                 bg-[#dde1e6]
-                w-${search? "2" : "4"}/5 h-fit p-3
+                w-4/5 h-fit p-3
                 rounded-2xl shadow-sm
                 transition-all duration-500 ease-in-out
                 flex flex-wrap justify-between items-center
-                hover:${search? "" : "w-[81%]"}
+                hover:w-[81%]
                 hover:shadow-md`,
                 className])}>
             {search? (
                 <div ref={ref} className="w-full h-full flex">
                     <SearchIcon className="fill-[#0043ce]"/>
-                    <input
-                        className="
-                            w-full h-15 pl-3
+                    <form
+                        className="w-full h-15"
+                        onSubmit={handleSubmit}>
+                        <input
+                            className="
+                            w-full h-full pl-3
                             bg-white
                             rounded-2xl
                             outline-none"
-                        placeholder="Busqueda..."
-                    />
+                            placeholder="Busqueda..."
+                            type="text"
+                            onChange={handleChange}
+                        />
+                    </form>
                 </div>
             ) : (
                 <>
-                    {test.map((topicSearchs, index) => {
+                    {searchTopics.map((topicSearchs, index) => {
                         return(
-                            <>
+                            <Fragment key={index}>
                                 {index !== (topicsLenght - 1)? (
                                     <>
                                         <GeneralButton
@@ -57,7 +84,10 @@ const Searchbar: FC<SearchbarProps> = ({className}): JSX.Element => {
                                                 text-black
                                                 ${search? "invisible" : "visible"}
                                                 hover:text-[#0043ce]
-                                                hover:bg-transparent`}
+                                                hover:bg-transparent
+                                                active:bg-transparent
+                                                active:scale-105
+                                                active:text-[#002d9c]`}
                                             size="medium"
                                         >{topicSearchs}
                                         </GeneralButton>
@@ -71,7 +101,8 @@ const Searchbar: FC<SearchbarProps> = ({className}): JSX.Element => {
                                             outline-none
                                             shadow-none
                                             text-black
-                                            hover:bg-transparent"
+                                            hover:bg-transparent
+                                            active:bg-transparent"
                                         size="medium"
                                         onClick={() => setSearch(prev => !prev)}
                                     >
@@ -81,7 +112,7 @@ const Searchbar: FC<SearchbarProps> = ({className}): JSX.Element => {
                                     </GeneralButton>
                                     )
                                 }
-                            </>
+                            </Fragment>
                         );
                     })}
                 </>

@@ -1,6 +1,6 @@
 import { useEffect, RefObject, ChangeEvent } from "react";
 
-const useClickOutside = (refComponent: RefObject<HTMLInputElement>, func: () => void) => {
+const useClickOutside = (refComponent: RefObject<HTMLInputElement>, func: () => void): void => {
 	useEffect(() => {
 		const clickOutsideHandeler = (e: MouseEvent): void => {
 			const target: EventTarget | null = e.target;
