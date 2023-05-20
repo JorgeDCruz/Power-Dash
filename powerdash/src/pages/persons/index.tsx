@@ -5,7 +5,9 @@ import { GeneralLayout } from "~/components";
 const Persons: NextPageWithLayout = (): JSX.Element => {
     return (
         <div>
-            <Searchbar/>
+            <Searchbar
+                className="ml-32 mt-32"
+            />
         </div>
     );
 }
