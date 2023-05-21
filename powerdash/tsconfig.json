@@ -5,6 +5,8 @@
     "allowJs": true,
     "checkJs": true,
     "skipLibCheck": true,
+    "sourceMap": true,
+    "outDir": "dist",
     "strict": true,
     "forceConsistentCasingInFileNames": true,
     "noEmit": true,
@@ -18,7 +20,9 @@
     "noUncheckedIndexedAccess": true,
     "baseUrl": ".",
     "paths": {
-      "~/*": ["./src/*"]
+      "~/*": ["./src/*"],
+      "@/*": ["./src/*"],
+
     }
   },
   "include": [
@@ -29,6 +33,8 @@
     "**/*.cjs",
     "**/*.mjs",
     "src/**/*.ts",
+    "src/**/*.tsx",
+
   ],
   "exclude": ["node_modules"]
 }

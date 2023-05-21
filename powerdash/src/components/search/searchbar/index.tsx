@@ -7,10 +7,10 @@ import {
     SetStateAction,
     FormEvent,
     Fragment } from "react";
-import { GeneralButton } from "~/components";
+import { Button } from "~/components";
 import { SearchIcon } from "~/assets";
 import { useClickOutside } from "~/hooks";
-import cn from "~/utils/classNames";
+import { cn } from "~/lib/utils";
 
 const Line: FC<{className?: string | undefined}> = ({className}): JSX.Element => <div className={cn(["w-[.7px] h-9 bg-black rounded-full", className])}></div>;
 
@@ -75,7 +75,7 @@ const Searchbar: FC<SearchbarProps> = ({className, searchTopics, setTopic}): JSX
                             <Fragment key={index}>
                                 {index !== (topicsLenght - 1)? (
                                     <>
-                                        <GeneralButton
+                                        <Button
                                             className={`
                                                 bg-transparent
                                                 rounded-none
@@ -88,13 +88,12 @@ const Searchbar: FC<SearchbarProps> = ({className, searchTopics, setTopic}): JSX
                                                 active:bg-transparent
                                                 active:scale-105
                                                 active:text-[#002d9c]`}
-                                            size="medium"
                                         >{topicSearchs}
-                                        </GeneralButton>
+                                        </Button>
                                         <Line className={`${search? "invisible" : "visible"}`}/>
                                     </>
                                     ) : (
-                                    <GeneralButton
+                                    <Button
                                         className="
                                             bg-transparent
                                             rounded-none
@@ -103,13 +102,12 @@ const Searchbar: FC<SearchbarProps> = ({className, searchTopics, setTopic}): JSX
                                             text-black
                                             hover:bg-transparent
                                             active:bg-transparent"
-                                        size="medium"
                                         onClick={() => setSearch(prev => !prev)}
                                     >
                                         <SearchIcon
                                             className="hover:fill-[#0043ce]"
                                         />
-                                    </GeneralButton>
+                                    </Button>
                                     )
                                 }
                             </Fragment>
