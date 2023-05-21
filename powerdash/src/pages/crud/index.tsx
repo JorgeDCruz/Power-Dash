@@ -20,13 +20,32 @@ const Crud: NextPageWithLayout = (): JSX.Element => {
         // technologies: "",
     })
 
-    const mutation = api.CRUDrouter.addEmployee.useMutation()
+    const [updateInfo, setNewInfo] = useState<{
+      employeeID: string;
+      attributeName: string;
+      newValue: string;
+    }>({
+      employeeID: "",
+      attributeName: "",
+      newValue: ""
+    });
+    
+
+    const mutCreate = api.CRUDrouter.addEmployee.useMutation()
+    const {data} = api.CRUDrouter.readEmployee.useQuery("")
+    const mutDelete = api.CRUDrouter.deleteEmployee.useMutation()
+    const mutUpdate = api.CRUDrouter.updateEmployee.useMutation()
 
     const handleSubmit: FormEventHandler<HTMLFormElement> = async (e) => {
         e.preventDefault();
-        mutation.mutate(crudInfo)
+        // mutCreate.mutate(crudInfo) 
+        // mutDelete.mutate("3214123IBM")
+        // console.log(data) 
         // console.log("Llegue aqui!")
         // router.push("/login")
+        // console.log(crudInfo)
+        
+        mutUpdate.mutate(updateInfo)
     };
 
   return (
@@ -40,22 +59,22 @@ const Crud: NextPageWithLayout = (): JSX.Element => {
         </h1>
         <div className={`flex flex-col space-y-2`}>
           <input
-            value={crudInfo.employeeID}
-            onChange={({target}) => setCrudInfo({...crudInfo, employeeID:target.value})}
+            value={updateInfo.employeeID}
+            onChange={({target}) => setNewInfo({...updateInfo, employeeID:target.value})}
             type="text"
             placeholder="id"
           />
           <input
-            value={crudInfo.employeeName}
-            onChange={({target}) => setCrudInfo({...crudInfo, employeeName:target.value})}
+            value={updateInfo.newValue}
+            onChange={({target}) => setNewInfo({...updateInfo, newValue:target.value})}
             type="text"
             placeholder="name"
           />
           <input
-            value={crudInfo.employeeCountry}
-            onChange={({target}) => setCrudInfo({...crudInfo, employeeCountry:target.value})}
+            value={updateInfo.attributeName}
+            onChange={({target}) => setNewInfo({...updateInfo, attributeName:target.value})}
             type="text"
-            placeholder="country"
+            placeholder="attribute"
           />
           <input
             value={crudInfo.employeeState}
