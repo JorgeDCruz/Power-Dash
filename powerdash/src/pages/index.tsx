@@ -7,6 +7,7 @@ import { useEffect } from "react";
 import { ChangeEvent } from "react";
 import { api } from "~/utils/api";
 import {signOut} from "next-auth/react";
+import * as AWS from "aws-sdk"
 
 const Home: NextPage = () => {
   //Obtenemos los datos de la sesión actual a través de next-login "useSession"
@@ -16,11 +17,40 @@ const Home: NextPage = () => {
   const router = useRouter();
   const mutation = api.CSV.CSV_Upload.useMutation();
 
+  const bucketName = "ibmcsv";
+  AWS.config.update({
+    accessKeyId: "AKIAYLDXTIPNDFKCTJNU",
+    secretAccessKey: "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",
+    region: "us-east-2"
+  });
+
+  const s3 = new AWS.S3();
+  
+
+
 
   const handleCSV = (e: ChangeEvent<HTMLInputElement>): void => {
     const input: FileList | null = e.target.files;
     if(input !== null){
       const file: File | undefined = input[0];
+
+      const params = {
+        Bucket: bucketName,
+        Key: file?.name as string, 
+        Body: file, // The content of the file
+        ACL: 'public-read' // Optional: Set the file's ACL (Access Control List) for public read access
+      };
+      
+
+      s3.upload(params, function(err: any, data: any) {
+        if (err) {
+          console.log('Error uploading file:', err);
+        } else {
+          console.log('File uploaded successfully. File location:', data.Location);
+        }
+      });
+      
+
       let text: string;
 
       const reader = new FileReader();
