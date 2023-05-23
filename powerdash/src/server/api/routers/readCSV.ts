@@ -1,4 +1,4 @@
-import { object, z } from "zod";
+import { z } from "zod";
 import { createTRPCRouter, publicProcedure } from "~/server/api/trpc";
 import { PrismaClient } from "@prisma/client";
 import Papa, {ParseResult} from "papaparse"
@@ -37,7 +37,6 @@ async function separateCSV(data: string){
   };
   //Hay que separar los datos de work_location para poderlo subir a la DB
   const parsedData:ParseResult<employee>  = Papa.parse(data, config);
-  
   const size: number = parsedData.data.length;
   let prismaInsert;
   
@@ -60,15 +59,18 @@ async function separateCSV(data: string){
     }
 
     const userID = existingUser?.id;
-    prismaInsert = await prisma.certification.create({
-      data:{
-        certificationName: <string>parsedData.data[i]?.certificationName,
-        expirationDate: new Date(<string>parsedData.data[i]?.expirationDate),
-        certificationType: <string>parsedData.data[i]?.certificationType,
-        marketCertification: false,
-        employeeId: <string>userID,
-      }
-    })
+    const existingCertification = await prisma.certification.findFirst({where: {certificationName: <string>parsedData.data[i]?.certificationName, employeeId: userID}});
+    if(!existingCertification){
+      prismaInsert = await prisma.certification.create({
+        data:{
+          certificationName: <string>parsedData.data[i]?.certificationName,
+          expirationDate: new Date(<string>parsedData.data[i]?.expirationDate),
+          certificationType: <string>parsedData.data[i]?.certificationType,
+          marketCertification: false,
+          employeeId: <string>userID,
+        }
+      })
+    }
   }
 }
 
