@@ -27,15 +27,16 @@ export function insertFile(bucketName: string, objectKey: string, objectBody: Fi
 
 
 
-export async function getFile(bucketName: string, objectKey: string): Promise<File>{
+export async function getFile(bucketName: string, objectKey: string): Promise<string>{
     const retrievalParameters = {
         Bucket: bucketName,
         Key: objectKey
     };
-
     try{
         const response = await s3_connection.getObject(retrievalParameters).promise();
-        return response.Body as File;
+        const responseContent: string = response.Body?.toString('utf-8') as string;
+        //console.log("Res: ", response.Body?.toString('utf-8'))
+        return responseContent;
     }catch(error){
         console.error("Error retrieving file: ", error);
         throw error;

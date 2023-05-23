@@ -39,7 +39,6 @@ async function separateCSV(data: string){
   const parsedData:ParseResult<employee>  = Papa.parse(data, config);
   const size: number = parsedData.data.length;
   let prismaInsert;
-  
   for(let i = 0; i < size; i++){
     //Separamos la "work_location" por comas
     const locations = parsedData.data[i]?.work_location.split(",");
