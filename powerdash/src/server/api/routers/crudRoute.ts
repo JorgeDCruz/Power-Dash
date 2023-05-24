@@ -17,63 +17,6 @@ const employeeSchema = z.object({
     technologies: z.array(z.string()).optional(),
 });
 
-const uptEmpSchema = z.object({
-    employeeID: z.string(),
-    attributeName: z.string(),
-    newValue: z.string()
-});
-
-
-async function updateEmployee(_employeeID: string, _attributeName: string, _value: string) {
-    
-    switch (_attributeName) {
-        case 'employeeName':
-            const name = await prisma.employee.update({
-                where: { employeeID: _employeeID},
-                data: {employeeName: <string>_value}
-            });
-            return name;
-        case 'employeeCountry':
-            const country = await prisma.employee.update({
-                where: { employeeID: _employeeID},
-                data: {employeeCountry: <string>_value}
-            });
-            return country;
-        case 'employeeState':
-            const state = await prisma.employee.update({
-                where: { employeeID: _employeeID},
-                data: {employeeState: <string>_value}
-            });
-            return state;
-        case 'employeeCity':
-            const city = await prisma.employee.update({
-                where: { employeeID: _employeeID},
-                data: {employeeCity: <string>_value}
-            });
-            return city;
-        case 'yearsXP':
-            const xp = await prisma.employee.update({
-                where: { employeeID: _employeeID},
-                data: {yearsXP: <number>parseInt(_value)}
-            });
-        return xp;
-        case 'employeePosition':
-            const position = await prisma.employee.update({
-                where: { employeeID: _employeeID},
-                data: {employeePosition: <string>_value}
-            });
-            return position;
-        case 'employeeArea':
-            const area = await prisma.employee.update({
-                where: { employeeID: _employeeID},
-                data: {employeeArea: <string>_value}
-            });
-            return area;
-    }
-    
-}
-
-
 
 export const crudRouter = createTRPCRouter({
     addEmployee: protectedProcedure
@@ -117,11 +60,27 @@ export const crudRouter = createTRPCRouter({
             
         }),
     updateEmployee: protectedProcedure
-        .input(uptEmpSchema)
+        .input(employeeSchema)
         .mutation(async (req) => {
             const { input } = req;
             // const { ...data } = employeeSchema.parse(input);
-            const  updtEmp = await updateEmployee(input.employeeID, input.attributeName, input.newValue);
+            const  updtEmp = await prisma.employee.update({
+                where: {
+                    employeeID: input.employeeID
+                },
+                data: {
+                    employeeID: input.employeeID,
+                    employeeName: input.employeeName,
+                    employeeCountry: input.employeeCountry,
+                    employeeState: input.employeeState,
+                    employeeCity: input.employeeCity,
+                    yearsXP: input.yearsXP,
+                    employeePosition: input.employeePosition,     
+                    employeeArea: input.employeeArea,
+                    programmingLanguages: input.programmingLanguages,
+                    technologies: input.technologies,
+                }
+            })
             return updtEmp;
         }),
     deleteEmployee: protectedProcedure

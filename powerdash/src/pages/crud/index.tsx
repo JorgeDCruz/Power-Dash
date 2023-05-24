@@ -44,8 +44,7 @@ const Crud: NextPageWithLayout = (): JSX.Element => {
         // console.log("Llegue aqui!")
         // router.push("/login")
         // console.log(crudInfo)
-        
-        mutUpdate.mutate(updateInfo)
+        // mutUpdate.mutate(crudInfo)
     };
 
   return (
