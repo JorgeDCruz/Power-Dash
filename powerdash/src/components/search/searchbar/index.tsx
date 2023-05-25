@@ -1,6 +1,5 @@
 import { 
     FC,
-UWU
     useState,
     useRef,
     SyntheticEvent,
