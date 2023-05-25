@@ -19,7 +19,7 @@ const Home: NextPage = () => {
 
   const handleCSV = (e: ChangeEvent<HTMLInputElement>): void => {
     const input: FileList | null = e.target.files;
-    if(input !== null){
+    if(input){
       const file: File | undefined = input[0];
       let text: string;
 
@@ -30,7 +30,7 @@ const Home: NextPage = () => {
         console.log("Success")
         return;
       };
-      reader.readAsText((file !== undefined)? file : new Blob);
+      reader.readAsText((file)? file : new Blob);
     }
     return;
   }

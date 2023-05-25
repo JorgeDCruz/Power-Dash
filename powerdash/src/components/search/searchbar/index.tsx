@@ -34,7 +34,7 @@ const Searchbar: FC<SearchbarProps> = ({className, searchTopics, setTopic}): JSX
         console.log("OLA")
     }
 
-    const handleChange = (e: FormEvent<HTMLInputElement>): void => {
+    const handleChange = async(e: FormEvent<HTMLInputElement>): Promise<void> => {
         setSearchText(e.currentTarget.value);
         setTopic(e.currentTarget.value);
     }
@@ -88,6 +88,7 @@ const Searchbar: FC<SearchbarProps> = ({className, searchTopics, setTopic}): JSX
                                                 active:bg-transparent
                                                 active:scale-105
                                                 active:text-[#002d9c]`}
+                                            onClick={() => setTopic(topicSearchs)}
                                         >{topicSearchs}
                                         </Button>
                                         <Line className={`${search? "invisible" : "visible"}`}/>

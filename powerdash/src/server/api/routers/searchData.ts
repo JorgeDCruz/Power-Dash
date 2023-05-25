@@ -11,7 +11,11 @@ export const searchRouter = createTRPCRouter({
             const {input} = req;
             const given_ID = input;
             //Hay que checar que nos regresa la query si no encuentra el dato
-            const retrievedRecords = await prisma.user.findMany({ where: {id: given_ID}});
+            const retrievedRecords = await prisma.employee.findMany({ where: {
+                OR: [
+                    {id: {contains: given_ID}},
+                    {employeeArea: {contains:<string>given_ID}}
+            ]}});
             if(!retrievedRecords){
                 throw new Error('No se encontro usuarios con el ID');
             }
