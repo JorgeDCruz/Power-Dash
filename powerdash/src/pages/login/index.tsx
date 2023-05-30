@@ -7,6 +7,7 @@ import { NextPageWithLayout } from "~/pages/page";
 import { Button } from "~/components/buttons";
 import { Input } from "~/components/inputs/Input";
 import { Card } from "~/components/cards/Card";
+import Label from "~/components/labels";
 
 const Login: NextPageWithLayout = (): JSX.Element => {
   //Creamos variables para obtener los datos del form
@@ -39,47 +40,43 @@ const Login: NextPageWithLayout = (): JSX.Element => {
             Inicia sesión con tu cuenta de IBM
           </h1>
           <div className={`flex flex-col space-y-2`}>
-            <Input
-              value={userInfo.email}
-              onChange={({ target }) =>
-                setUserInfo({ ...userInfo, email: target.value })
-              }
-              type="email"
-              placeholder="email@gmail.com"
-            />
-            <Input
-              value={userInfo.password}
-              onChange={({ target }) =>
-                setUserInfo({ ...userInfo, password: target.value })
-              }
-              type="password"
-              placeholder="********"
-            />
+            <div className={"flex flex-col space-y-1"}>
+              <Label htmlFor={"email"}>Correo</Label>
+              <Input
+                id={"email"}
+                value={userInfo.email}
+                onChange={({ target }) =>
+                  setUserInfo({ ...userInfo, email: target.value })
+                }
+                type="email"
+                placeholder="email@gmail.com"
+              />
+            </div>
+
+            <div className={"flex flex-col space-y-1"}>
+              <Label htmlFor={"password"}>Contraseña</Label>
+              <Input
+                id={"password"}
+                value={userInfo.password}
+                onChange={({ target }) =>
+                  setUserInfo({ ...userInfo, password: target.value })
+                }
+                type="password"
+                placeholder="********"
+              />
+            </div>
           </div>
 
-          <Button className={`mt-4`} type={`submit`}>
+          <Button className={`mb-2 mt-4`} type={`submit`}>
             Iniciar sesión
+          </Button>
+          <Button variant={"link"} onClick={() => router.push("/register")}>
+            Registrate
           </Button>
         </form>
       </Card>
-
-      <button onClick={() => router.push("/register")}>Registro</button>
     </Div100vh>
   );
 };
 
-Login.getLayout = (page) => (
-  <GeneralLayout
-    userImage={`https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80`}
-    userJob={`Software Engineer`}
-    userName={`Jorge Plasencia`}
-  >
-    {page}
-  </GeneralLayout>
-);
-
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore
 export default Login;
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore
