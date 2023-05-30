@@ -4,6 +4,7 @@ import { useRouter } from "next/router";
 import Div100vh from "react-div-100vh";
 import { api } from "~/utils/api";
 import { Button, Input } from "~/components";
+import Label from "~/components/labels";
 
 const Index: NextPage = (): JSX.Element => {
   const router = useRouter();
@@ -33,37 +34,52 @@ const Index: NextPage = (): JSX.Element => {
           Crea tu cuenta
         </h1>
         <div className={`flex flex-col space-y-2`}>
-          <Input
-            value={userInfo.email}
-            onChange={({ target }) =>
-              setUserInfo({ ...userInfo, email: target.value })
-            }
-            type="email"
-            placeholder="email@gmail.com"
-          />
-          <Input
-            value={userInfo.password}
-            onChange={({ target }) =>
-              setUserInfo({ ...userInfo, password: target.value })
-            }
-            type="password"
-            placeholder="********"
-          />
-          <Input
-            value={userInfo.name}
-            onChange={({ target }) =>
-              setUserInfo({ ...userInfo, name: target.value })
-            }
-            type="text"
-            placeholder="Jonh Dou"
-          />
+          <div className={"flex flex-col space-y-1"}>
+            <Label htmlFor={"name"}>Nombre</Label>
+            <Input
+              id={"name"}
+              value={userInfo.name}
+              onChange={({ target }) =>
+                setUserInfo({ ...userInfo, name: target.value })
+              }
+              type="text"
+              placeholder="Jonh Dou"
+            />
+          </div>
+          <div className={"flex flex-col space-y-1"}>
+            <Label htmlFor={"email"}>Correo</Label>
+            <Input
+              id={"email"}
+              value={userInfo.email}
+              onChange={({ target }) =>
+                setUserInfo({ ...userInfo, email: target.value })
+              }
+              type="email"
+              placeholder="email@gmail.com"
+            />
+          </div>
+          <div className={"flex flex-col space-y-1"}>
+            <Label htmlFor={"password"}>Contraseña</Label>
+
+            <Input
+              id={"password"}
+              value={userInfo.password}
+              onChange={({ target }) =>
+                setUserInfo({ ...userInfo, password: target.value })
+              }
+              type="password"
+              placeholder="********"
+            />
+          </div>
         </div>
 
-        <Button className={`mt-4`} type={`submit`} variant={`ghost`}>
+        <Button className={`mb-2 mt-4`} type={`submit`}>
           Crear cuenta
         </Button>
+        <Button variant={"link"} onClick={() => router.push("/login")}>
+          Iniciar sesión
+        </Button>
       </form>
-      <button onClick={() => router.push("/login")}>Log In</button>
     </Div100vh>
   );
 };
