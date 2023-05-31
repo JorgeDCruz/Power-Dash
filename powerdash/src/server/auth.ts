@@ -6,9 +6,7 @@ import {
 } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import { PrismaAdapter } from "@next-auth/prisma-adapter";
-import { env } from "~/env.mjs";
 import { prisma } from "~/server/db";
-import * as process from "process";
 import { PrismaClient } from "@prisma/client";
 import helpers from "../utils/middleware/helpers"
 
