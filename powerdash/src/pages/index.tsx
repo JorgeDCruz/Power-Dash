@@ -2,24 +2,26 @@
 import { type NextPage } from "next";
 import Head from "next/head";
 import { useSession } from "next-auth/react";
-import { useRouter } from "next/router";
-import { useEffect } from "react";
 import { ChangeEvent } from "react";
 import { api } from "~/utils/api";
 import {signOut} from "next-auth/react";
+import { getFile, insertFile } from "~/utils/aws/S3_Bucket";
+import { type } from "os";
+
 
 const Home: NextPage = () => {
   //Obtenemos los datos de la sesión actual a través de next-login "useSession"
   const { data: session, status } = useSession();
-  //console.log("session", session);
+  console.log("session", session);
 
-  const router = useRouter();
   const mutation = api.CSV.CSV_Upload.useMutation();
 
+  const bucketName = "ibmcsv";
 
-  const handleCSV = (e: ChangeEvent<HTMLInputElement>): void => {
+  
+  const handleCSV = async(e: ChangeEvent<HTMLInputElement>) => {
     const input: FileList | null = e.target.files;
-    if(input !== null){
+    if(input){
       const file: File | undefined = input[0];
       let text: string;
 
@@ -30,7 +32,7 @@ const Home: NextPage = () => {
         console.log("Success")
         return;
       };
-      reader.readAsText((file !== undefined)? file : new Blob);
+      reader.readAsText((file)? file : new Blob);
     }
     return;
   }

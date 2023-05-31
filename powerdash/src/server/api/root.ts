@@ -1,6 +1,7 @@
 import { createTRPCRouter } from "~/server/api/trpc";
 import { authRouter } from "~/server/api/routers/authenticationRoute";
 import { CSV_Router } from "./routers/readCSV";
+import { searchRouter } from "./routers/searchData";
 import { crudRouter } from "./routers/crudRoute";
 
 /**
@@ -11,7 +12,8 @@ import { crudRouter } from "./routers/crudRoute";
 export const appRouter = createTRPCRouter({
   auth: authRouter,
   CSV: CSV_Router,
-  CRUDrouter: crudRouter,
+  search: searchRouter,
+  CRUDrouter: crudRouter
 });
 
 // export type definition of API
