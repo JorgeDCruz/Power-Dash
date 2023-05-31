@@ -79,6 +79,7 @@ export const crudRouter = createTRPCRouter({
                     employeeArea: input.employeeArea,
                     programmingLanguages: input.programmingLanguages,
                     technologies: input.technologies,
+                    
                 }
             })
             return updtEmp;
