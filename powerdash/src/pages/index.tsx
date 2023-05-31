@@ -21,31 +21,18 @@ const Home: NextPage = () => {
   
   const handleCSV = async(e: ChangeEvent<HTMLInputElement>) => {
     const input: FileList | null = e.target.files;
-    if(input !== null){
-      //Insertamos el archivo en el bucket de s3
-      insertFile(bucketName, input[0]?.name as string, input[0] as File);
+    if(input){
       const file: File | undefined = input[0];
-      
-      //Necesito ver como hacer handle a este error
-      try{
-        //GetFile nos regresará el contenido del csv como un string
-        const responseData: string = await getFile(bucketName, file?.name as string);
-        mutation.mutate(responseData);
-      }catch(error){
-        //Si llegase a dar un error en la obtención del archivo, se utilizará el local
-        console.log("Error retrieving the object: ", error);
-        console.log("Using the locally given file instead");
-        let text: string;
-        const reader = new FileReader();
-        reader.onload = (e: ProgressEvent<FileReader>): void => {
-          text = e.target?.result as string;
-          console.log("Text: ", text);
-          mutation.mutate(text);
-          console.log("Success")
-          return;
-        };
-        reader.readAsText((file !== undefined)? file : new Blob);
-      }
+      let text: string;
+
+      const reader = new FileReader();
+      reader.onload = (e: ProgressEvent<FileReader>): void => {
+        text = e.target?.result as string;
+        mutation.mutate(text);
+        console.log("Success")
+        return;
+      };
+      reader.readAsText((file)? file : new Blob);
     }
     return;
   }
