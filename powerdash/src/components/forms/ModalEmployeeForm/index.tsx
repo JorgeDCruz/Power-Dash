@@ -1,16 +1,20 @@
-import { FC, useRef, useEffect, useState, Fragment } from "react";
-import { Button } from "~/components";
+import { FC, useRef, useEffect, useState } from "react";
+import { Button, Input } from "~/components";
 import { CloseIcon } from "~/assets";
+import { useForm, Controller, SubmitHandler } from "react-hook-form";
 import { IModalEmployee } from "~/schemas";
 
 interface ModalEmployeeFormProps {
     show: boolean;
     className?: string;
-}
+};
 
 const ModalEmployeeForm: FC<ModalEmployeeFormProps> = ({show, className}): JSX.Element => {
     const [active, setActive] = useState<boolean>(false);
     const ref = useRef<HTMLDialogElement>(null);
+
+    const { handleSubmit, reset, control } = useForm<IModalEmployee>();
+    const onSubmit: SubmitHandler<IModalEmployee> = (data: IModalEmployee) => console.log(data);
 
     useEffect(() => {
             setActive(prev => !prev);
@@ -59,6 +63,19 @@ const ModalEmployeeForm: FC<ModalEmployeeFormProps> = ({show, className}): JSX.E
                         />
                     </Button>
                 </div>
+                <form
+                    onSubmit={handleSubmit(onSubmit)}
+                >
+                    <Controller
+                        control={control}
+                        name={`1`}
+                        render={({
+                            field: {onChange, value}
+                        }) => (
+                            <Input/>
+                        )}
+                    />
+                </form>
             </dialog>
         </>
     );
