@@ -6,16 +6,10 @@ import Div100vh from "react-div-100vh";
 
 interface GeneralLayoutProps {
   children: React.ReactNode;
-  userImage: string;
   userName: string;
-  userJob: string;
 }
-const GeneralLayout = ({
-  children,
-  userImage,
-  userName,
-  userJob,
-}: GeneralLayoutProps) => {
+
+const GeneralLayout = ({ children, userName }: GeneralLayoutProps) => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
   return (
@@ -75,11 +69,7 @@ const GeneralLayout = ({
                   </Transition.Child>
                   {/* Mobile Sidebar component, swap this element with another sidebar if you like */}
                   <div className="flex grow flex-col gap-y-5 overflow-y-auto bg-white px-6 pb-2 pt-10">
-                    <Sidebar
-                      userJob={userJob}
-                      userName={userName}
-                      userImage={userImage}
-                    />
+                    <Sidebar userName={userName} />
                   </div>
                 </Dialog.Panel>
               </Transition.Child>
@@ -91,11 +81,7 @@ const GeneralLayout = ({
         <div className="hidden lg:fixed lg:inset-y-0 lg:z-50 lg:flex lg:w-72 lg:flex-col">
           {/* Sidebar component, swap this element with another sidebar if you like */}
           <div className="flex grow flex-col gap-y-5 overflow-y-auto border-r border-gray-200 bg-white px-6 pt-5">
-            <Sidebar
-              userJob={userJob}
-              userName={userName}
-              userImage={userImage}
-            />
+            <Sidebar userName={userName} />
           </div>
         </div>
 
