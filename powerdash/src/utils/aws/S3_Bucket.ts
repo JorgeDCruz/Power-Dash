@@ -27,7 +27,7 @@ export function insertFile(bucketName: string, objectKey: string, objectBody: Fi
 }
 
 
-
+//Funcion para obtener archivos del bucket
 export async function getFile(bucketName: string, objectKey: string): Promise<string>{
     const retrievalParameters = {
         Bucket: bucketName,
