@@ -2,35 +2,50 @@
 import { type NextPage } from "next";
 import Head from "next/head";
 import { useSession } from "next-auth/react";
-import { useRouter } from "next/router";
-import { useEffect } from "react";
 import { ChangeEvent } from "react";
 import { api } from "~/utils/api";
 import {signOut} from "next-auth/react";
+import { getFile, insertFile } from "~/utils/aws/S3_Bucket";
+import { type } from "os";
+
 
 const Home: NextPage = () => {
   //Obtenemos los datos de la sesión actual a través de next-login "useSession"
   const { data: session, status } = useSession();
-  //console.log("session", session);
+  console.log("session", session);
 
-  const router = useRouter();
   const mutation = api.CSV.CSV_Upload.useMutation();
 
+  const bucketName = "ibmcsv";
 
-  const handleCSV = (e: ChangeEvent<HTMLInputElement>): void => {
+  
+  const handleCSV = async(e: ChangeEvent<HTMLInputElement>) => {
     const input: FileList | null = e.target.files;
     if(input !== null){
+      //Insertamos el archivo en el bucket de s3
+      insertFile(bucketName, input[0]?.name as string, input[0] as File);
       const file: File | undefined = input[0];
-      let text: string;
-
-      const reader = new FileReader();
-      reader.onload = (e: ProgressEvent<FileReader>): void => {
-        text = e.target?.result as string;
-        mutation.mutate(text);
-        console.log("Success")
-        return;
-      };
-      reader.readAsText((file !== undefined)? file : new Blob);
+      
+      //Necesito ver como hacer handle a este error
+      try{
+        //GetFile nos regresará el contenido del csv como un string
+        const responseData: string = await getFile(bucketName, file?.name as string);
+        mutation.mutate(responseData);
+      }catch(error){
+        //Si llegase a dar un error en la obtención del archivo, se utilizará el local
+        console.log("Error retrieving the object: ", error);
+        console.log("Using the locally given file instead");
+        let text: string;
+        const reader = new FileReader();
+        reader.onload = (e: ProgressEvent<FileReader>): void => {
+          text = e.target?.result as string;
+          console.log("Text: ", text);
+          mutation.mutate(text);
+          console.log("Success")
+          return;
+        };
+        reader.readAsText((file !== undefined)? file : new Blob);
+      }
     }
     return;
   }
