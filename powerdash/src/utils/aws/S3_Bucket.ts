@@ -1,7 +1,7 @@
 import { env } from "~/env.mjs"
 import * as AWS from "aws-sdk"
 
-
+//Credenciales de un user de IAM para el bucket de S3
 AWS.config.update({
     accessKeyId: env.NEXT_PUBLIC_AWS_ACCESS_KEY_ID,
     secretAccessKey: env.NEXT_PUBLIC_AWS_SECRET_ACCESS_KEY,
