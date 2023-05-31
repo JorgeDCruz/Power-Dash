@@ -10,6 +10,7 @@ AWS.config.update({
 
 export const s3_connection = new AWS.S3();
 
+//Funcion para insertar datos al bucket
 export function insertFile(bucketName: string, objectKey: string, objectBody: File){
     const parameters = {
         Bucket: bucketName,
