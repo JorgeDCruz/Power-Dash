@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { createTRPCRouter, publicProcedure, protectedProcedure } from "~/server/api/trpc";
+import { createTRPCRouter, protectedProcedure } from "~/server/api/trpc";
 import { PrismaClient } from "@prisma/client";
 
 const prisma = new PrismaClient();
@@ -98,11 +98,11 @@ export const crudRouter = createTRPCRouter({
                 where: {
                     employeeId: ourID?.id
                 }
-            })
+            });
             const deleteEmp = await prisma.employee.delete({
                 where:{
                     id: ourID?.id
                 },
-            })
+            });
         }),
 })
