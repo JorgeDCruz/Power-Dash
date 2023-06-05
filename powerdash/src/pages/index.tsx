@@ -25,8 +25,6 @@ const Home: NextPage = () => {
       //Insertamos el archivo en el bucket de s3
       insertFile(bucketName, input[0]?.name as string, input[0] as File);
       const file: File | undefined = input[0];
-      
-      //Necesito ver como hacer handle a este error
       try{
         //GetFile nos regresará el contenido del csv como un string
         const responseData: string = await getFile(bucketName, file?.name as string);
