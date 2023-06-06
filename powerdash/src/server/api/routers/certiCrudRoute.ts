@@ -74,7 +74,7 @@ const createOrAddCertification = async (_certification: z.infer<typeof addCertif
     })
     return newCertification;
 };
-// hola
+
 export const certificationCrudRouter = createTRPCRouter({
     addCertification: protectedProcedure
         .input(addCertificationSchema)

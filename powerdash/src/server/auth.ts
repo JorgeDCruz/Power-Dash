@@ -32,6 +32,7 @@ export const authOptions: NextAuthOptions = {
   //Especificamos la estrategía que utilizaremos para guardar los datos de la sesión
   session: {
     strategy: "jwt",
+    maxAge: 10 * 24 * 60 * 60,
   },
   //Especificamos los proovedores que utilizaremos
   providers: [
