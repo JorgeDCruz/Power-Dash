@@ -7,6 +7,9 @@ import { api } from "~/utils/api";
 import {signOut} from "next-auth/react";
 import { getFile, insertFile } from "~/utils/aws/S3_Bucket";
 import { type } from "os";
+import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend } from 'chart.js';
+import { Bar } from 'react-chartjs-2';
+import { FormEventHandler, useState } from "react";
 
 
 const Home: NextPage = () => {
@@ -18,7 +21,18 @@ const Home: NextPage = () => {
 
   const bucketName = "ibmcsv";
 
+  const [graphInfo, setGraphInfo] = useState({ xAxis: "", yAxis: "", type: ""});
   
+  ChartJS.register(
+    CategoryScale,
+    LinearScale,
+    BarElement,
+    Title,
+    Tooltip,
+    Legend
+  );
+
+
   const handleCSV = async(e: ChangeEvent<HTMLInputElement>) => {
     const input: FileList | null = e.target.files;
     if(input){
@@ -37,6 +51,73 @@ const Home: NextPage = () => {
     return;
   }
   
+  const data = {
+    labels: ['January', 'February', 'March', 'April', 'May', 'June'],
+    datasets: [
+      {
+        label: 'Sales',
+        data: [100, 200, 150, 250, 300, 200],
+        fill: false,
+        borderColor: 'rgb(75, 192, 192)',
+      },
+    ],
+  };
+  
+  const options = {
+    scales: {
+      y: {
+        beginAtZero: true,
+      },
+    },
+  };
+
+  const MyChart = () => {
+    return (
+      <div>
+        <h2>My Chart</h2>
+        <Bar data={data} options={options} />
+      </div>
+    );
+  };
+
+
+  const handleSubmitGraph: FormEventHandler<HTMLFormElement> = async (e) => { 
+    
+    e.preventDefault();
+    console.log("Hola");
+    const data = {
+      labels: [graphInfo.xAxis, graphInfo.yAxis],
+      datasets: [
+        {
+          label: graphInfo.xAxis,
+          data: [100, 200, 50],
+          backgroundColor: 'rgba(255, 99, 132, 0.5)',
+        },
+        {
+          label: graphInfo.yAxis,
+          data: [300, 500, 10],
+          backgroundColor: 'rgba(53, 162, 235, 0.5)',
+        }
+      ]
+    }
+
+    const options = {
+      resposive: true,
+      plugins: {
+        legend: {
+          position: 'top' as const,
+        },
+        title: {
+          display: true,
+          text: 'Chart.js Bar Chart',
+        },
+      },
+    }
+  };
+
+
+
+
   return (
     <>
       <Head>
@@ -45,6 +126,37 @@ const Home: NextPage = () => {
         <link rel="icon" href="https://cdn-icons-png.flaticon.com/512/5969/5969083.png" />
       </Head>
       <main className="flex min-h-screen flex-col items-center justify-center">
+        <div>
+          <form onSubmit={handleSubmitGraph}>
+            <h1>Certifications: </h1>
+            <h2>X Axis: </h2>
+            <input value={graphInfo.xAxis} onChange={({ target }) => setGraphInfo({ ...graphInfo, xAxis: target.value })} type="checkbox" name="java" id="java"></input>
+            <label> Java</label><br></br>
+            <input value={graphInfo.xAxis} onChange={({ target }) => setGraphInfo({ ...graphInfo, xAxis: target.value })} type="checkbox" name="cybersecurity" id="cybersecurity"></input>
+            <label> Cybersecurity</label><br></br>
+            <br></br>
+
+            <h2>Y Axis: </h2>
+            <input value={graphInfo.yAxis} onChange={({ target }) => setGraphInfo({ ...graphInfo, yAxis: target.value })} type="checkbox" name="java" id="java"></input>
+            <label> Java</label><br></br>
+            <input value={graphInfo.yAxis} onChange={({ target }) => setGraphInfo({ ...graphInfo, yAxis: target.value })} type="checkbox" name="cybersecurity" id="cybersecurity"></input>
+            <label> Cybersecurity</label><br></br>
+            <br></br>
+
+            <h1>Graph Type</h1>
+            <input value={graphInfo.type} onChange={({ target }) => setGraphInfo({ ...graphInfo, type: target.value })} type="checkbox" name="java" id="java"></input>
+            <label> Scatter </label><br></br>
+            <input value={graphInfo.type} onChange={({ target }) => setGraphInfo({ ...graphInfo, type: target.value })} type="checkbox" name="cybersecurity" id="cybersecurity"></input>
+            <label> Horizontal </label><br></br>
+            <button type="submit">OK</button>
+          </form>
+
+          <div>
+            <MyChart/>
+          </div>
+
+        </div>
+        <br></br>
         <input
           className=""
           onChange={handleCSV}
