@@ -9,28 +9,69 @@ import { getFile, insertFile } from "~/utils/aws/S3_Bucket";
 import { type } from "os";
 import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend } from 'chart.js';
 import { Bar } from 'react-chartjs-2';
-import { FormEventHandler, useState } from "react";
+import { FormEventHandler, useState, FC, useEffect } from "react";
+import { bool } from "aws-sdk/clients/signer";
 
+interface datasetType{
+  label: string;
+  data: number[];
+  backgroundColor: string; //`rgb(${number}, ${number}, ${number}, ${number})`
+}
+
+interface Data{
+  labels: string[];
+  datasets: datasetType[];
+}
+
+interface Options{
+  responsive: boolean;
+  plugins: {
+    legend: {
+      position: 'top'
+    },
+    title: {
+      display: boolean,
+      text: string
+    }
+  };
+}
+
+interface myGraphProps{
+  data: Data;
+  options: Options;
+}
 
 const Home: NextPage = () => {
   //Obtenemos los datos de la sesión actual a través de next-login "useSession"
   const { data: session, status } = useSession();
-  console.log("session", session);
+  //console.log("session", session);
 
   const mutation = api.CSV.CSV_Upload.useMutation();
 
   const bucketName = "ibmcsv";
 
   const [graphInfo, setGraphInfo] = useState({ xAxis: "", yAxis: "", type: ""});
+  const [viewGraph, setViewGraph] = useState<boolean>(false);
+  const [data, setData] = useState<Data>();
+
+
+  useEffect(() => {
+    setData({labels: ["Certifications"],
+      datasets: [
+        {
+          label: graphInfo.xAxis,
+          data: [100],
+          backgroundColor: 'rgba(255, 99, 132, 0.5)',
+        },
+        {
+          label: graphInfo.yAxis,
+          data: [300],
+          backgroundColor: 'rgba(53, 162, 235, 0.5)',
+        }
+      ]})
+  },[graphInfo])
   
-  ChartJS.register(
-    CategoryScale,
-    LinearScale,
-    BarElement,
-    Title,
-    Tooltip,
-    Legend
-  );
+  ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
 
 
   const handleCSV = async(e: ChangeEvent<HTMLInputElement>) => {
@@ -50,28 +91,21 @@ const Home: NextPage = () => {
     }
     return;
   }
-  
-  const data = {
-    labels: ['January', 'February', 'March', 'April', 'May', 'June'],
-    datasets: [
-      {
-        label: 'Sales',
-        data: [100, 200, 150, 250, 300, 200],
-        fill: false,
-        borderColor: 'rgb(75, 192, 192)',
-      },
-    ],
-  };
-  
+
   const options = {
-    scales: {
-      y: {
-        beginAtZero: true,
+    responsive: true,
+    plugins: {
+      legend: {
+        position: 'top' as const,
+      },
+      title: {
+        display: true,
+        text: "Certifications",
       },
     },
-  };
+  }
 
-  const MyChart = () => {
+  const MyChart: FC<myGraphProps> = ({data, options}) => {
     return (
       <div>
         <h2>My Chart</h2>
@@ -80,43 +114,11 @@ const Home: NextPage = () => {
     );
   };
 
-
   const handleSubmitGraph: FormEventHandler<HTMLFormElement> = async (e) => { 
-    
     e.preventDefault();
-    console.log("Hola");
-    const data = {
-      labels: [graphInfo.xAxis, graphInfo.yAxis],
-      datasets: [
-        {
-          label: graphInfo.xAxis,
-          data: [100, 200, 50],
-          backgroundColor: 'rgba(255, 99, 132, 0.5)',
-        },
-        {
-          label: graphInfo.yAxis,
-          data: [300, 500, 10],
-          backgroundColor: 'rgba(53, 162, 235, 0.5)',
-        }
-      ]
-    }
-
-    const options = {
-      resposive: true,
-      plugins: {
-        legend: {
-          position: 'top' as const,
-        },
-        title: {
-          display: true,
-          text: 'Chart.js Bar Chart',
-        },
-      },
-    }
+    //Para cambiar el estado actual de la variable de la grafica
+    setViewGraph(prev => !prev);
   };
-
-
-
 
   return (
     <>
@@ -130,31 +132,29 @@ const Home: NextPage = () => {
           <form onSubmit={handleSubmitGraph}>
             <h1>Certifications: </h1>
             <h2>X Axis: </h2>
-            <input value={graphInfo.xAxis} onChange={({ target }) => setGraphInfo({ ...graphInfo, xAxis: target.value })} type="checkbox" name="java" id="java"></input>
+            <input value={"java"} onChange={({ target }) => {setGraphInfo({ ...graphInfo, xAxis: target.value });} } type="radio" name="java" id="java"></input>
             <label> Java</label><br></br>
-            <input value={graphInfo.xAxis} onChange={({ target }) => setGraphInfo({ ...graphInfo, xAxis: target.value })} type="checkbox" name="cybersecurity" id="cybersecurity"></input>
+            <input value={"cybersecurity"} onChange={({ target }) => setGraphInfo({ ...graphInfo, xAxis: target.value })} type="radio" name="cybersecurity" id="cybersecurity"></input>
             <label> Cybersecurity</label><br></br>
             <br></br>
 
             <h2>Y Axis: </h2>
-            <input value={graphInfo.yAxis} onChange={({ target }) => setGraphInfo({ ...graphInfo, yAxis: target.value })} type="checkbox" name="java" id="java"></input>
+            <input value={"java"} onChange={({ target }) => setGraphInfo({ ...graphInfo, yAxis: target.value })} type="checkbox" name="java" id="java"></input>
             <label> Java</label><br></br>
-            <input value={graphInfo.yAxis} onChange={({ target }) => setGraphInfo({ ...graphInfo, yAxis: target.value })} type="checkbox" name="cybersecurity" id="cybersecurity"></input>
+            <input value={"cybersecurity"} onChange={({ target }) => setGraphInfo({ ...graphInfo, yAxis: target.value })} type="checkbox" name="cybersecurity" id="cybersecurity"></input>
             <label> Cybersecurity</label><br></br>
             <br></br>
 
             <h1>Graph Type</h1>
-            <input value={graphInfo.type} onChange={({ target }) => setGraphInfo({ ...graphInfo, type: target.value })} type="checkbox" name="java" id="java"></input>
+            <input value={graphInfo.type} onChange={({ target }) => setGraphInfo({ ...graphInfo, type: target.value })} type="checkbox" name="scatter" id="scatter"></input>
             <label> Scatter </label><br></br>
-            <input value={graphInfo.type} onChange={({ target }) => setGraphInfo({ ...graphInfo, type: target.value })} type="checkbox" name="cybersecurity" id="cybersecurity"></input>
+            <input value={graphInfo.type} onChange={({ target }) => setGraphInfo({ ...graphInfo, type: target.value })} type="checkbox" name="horizontal" id="horizontal"></input>
             <label> Horizontal </label><br></br>
-            <button type="submit">OK</button>
+            <button className="border-2 border-black" type="submit">OK</button>
           </form>
-
           <div>
-            <MyChart/>
+            {viewGraph && <MyChart data={data as Data} options={options}/>}
           </div>
-
         </div>
         <br></br>
         <input
