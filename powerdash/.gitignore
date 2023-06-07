@@ -17,6 +17,7 @@
 /out/
 next-env.d.ts
 
+
 # production
 /build
 
@@ -36,6 +37,8 @@ yarn-error.log*
 .env.example
 .env.*.*
 *.env
+.env
+
 # vercel
 .vercel
 

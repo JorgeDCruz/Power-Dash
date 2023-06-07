@@ -31,7 +31,6 @@ model Employee {
 
 model Certification {
     id                    String    @id @default(uuid())
-    // The line comment is only fi is necesari
     // certificationID            String    @default(uuid())
     certificationName     String
     certificationProvider String?
