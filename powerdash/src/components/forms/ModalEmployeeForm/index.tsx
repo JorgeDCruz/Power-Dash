@@ -6,6 +6,20 @@ import { useForm, Controller, SubmitHandler } from "react-hook-form";
 import { zodResolver } from '@hookform/resolvers/zod';
 import { IModalEmployee, EmployeeSchema } from "~/schemas";
 
+// (async () => {
+//     const response = await fetch(
+//       'https://parseapi.back4app.com/classes/ProgrammingLanguages_All_Programming_Languages?count=1&limit=705&keys=ProgrammingLanguage',
+//       {
+//         headers: {
+//           'X-Parse-Application-Id': '5p7Adh1cb7WdAcGXLhCch4njKNoFEoKSaGUBpvVS', // This is your app's application id
+//           'X-Parse-REST-API-Key': 'QzhGQPey6iEPOI0FIuSKglifPxAdyz9ulcE0ENqV', // This is your app's REST API key
+//         }
+//       }
+//     );
+//     const data = await response.json(); // Here you have the data that you need
+//     console.log(JSON.stringify(data, null, 2));
+//   })();
+
 interface ModalEmployeeFormProps {
     show: boolean;
     className?: string;
@@ -61,7 +75,7 @@ const ModalEmployeeForm: FC<ModalEmployeeFormProps> = ({show, className}): JSX.E
             employeeCity: "",
             yearsXP: 0,
             employeePosition: "",
-            programmingLanguages: [""],
+            programmingLanguages: "",
             technologies: ""
         }
     });
@@ -70,12 +84,8 @@ const ModalEmployeeForm: FC<ModalEmployeeFormProps> = ({show, className}): JSX.E
 
     const onSubmit: SubmitHandler<IModalEmployee> = (data: IModalEmployee): void => {
         console.log(data)
-        const validationResults = EmployeeSchema.safeParse(data);
-        console.log(validationResults)
-        if(!validationResults.success){
-            console.log("ENTRO")
-            console.log(validationResults.error.name)
-        }
+        
+        console.log(data.programmingLanguages)
     };
 
     useEffect(() => {
@@ -173,7 +183,27 @@ const ModalEmployeeForm: FC<ModalEmployeeFormProps> = ({show, className}): JSX.E
                         />
                     );
                 })}
-                <input type="submit" className="cursor-pointer"/>
+                <div
+                    className="
+                        w-full h-fit
+                        flex justify-end"
+                >
+                    <Input 
+                        type="submit"
+                        className="
+                            w-1/4 h-12
+                            my-3
+                            text-lg font-thin text-ibm-cyan-10
+                            bg-gradient-to-r from-ibm-blue-40 to-ibm-purple-60
+                            justify-center
+                            transition duration-200 delay-75 ease-in
+                            cursor-pointer
+                            hover:scale-105
+                            hover:-translate-y-1
+                            hover:text-ibm-cyan-70
+                            hover:gb-gradient-to-l hover:from-ibm-blue-30 hover:to-ibm-purple-50"
+                    />
+                </div>
             </form>
         </dialog>
     );

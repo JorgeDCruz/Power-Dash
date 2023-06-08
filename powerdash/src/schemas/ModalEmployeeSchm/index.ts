@@ -10,10 +10,7 @@ const ModalEmployeeSchm: z.ZodSchema = z.object({
         int("Solo números enteros").
         safe(),
     employeePosition: z.string().max(100).nonempty("Este Campo es Obligatorio"),
-    programmingLanguages: z.coerce.string().
-        array().
-        max(50).
-        nonempty("Este Campo es Obligatorio"),
+    programmingLanguages: z.coerce.string().max(50).nonempty("Este Campo es Obligatorio"),
     technologies: z.coerce.string().max(50).nonempty("Este Campo es Obligatorio")
 }).required();
 
