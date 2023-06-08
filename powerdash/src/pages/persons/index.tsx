@@ -9,16 +9,16 @@ const Persons: NextPageWithLayout = (): JSX.Element => {
     const [topic, setTopic] = useState<string>("");
     const [modal, setModal] = useState<boolean>(false);
 
-    const mutation = api.search.searchData.useMutation();
+  const mutation = api.search.searchData.useMutation();
 
-    useEffect(() => {
-        //Hay que cambiar el "any" por el tipo del "onChange"
-        const fetchData = async<onChange,>(): Promise<void> => {
-            const data =  mutation.mutate(topic);
-            console.log("Data: ", data);
-        }
-        fetchData();
-    }, [topic]);
+  useEffect(() => {
+    //Hay que cambiar el "any" por el tipo del "onChange"
+    const fetchData = async <onChange,>(): Promise<void> => {
+      const data = mutation.mutate(topic);
+      console.log("Data: ", data);
+    };
+    fetchData();
+  }, [topic]);
 
     return (
         <div>
@@ -60,13 +60,7 @@ const Persons: NextPageWithLayout = (): JSX.Element => {
 }
 
 Persons.getLayout = (page) => (
-    <GeneralLayout
-        userImage={`https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80`}
-        userJob={`Software Engineer`}
-        userName={`Jorge Plasencia`}
-    >
-        {page}
-    </GeneralLayout>
+  <GeneralLayout userName={`Jorge Plasencia`}>{page}</GeneralLayout>
 );
 
 export default Persons;

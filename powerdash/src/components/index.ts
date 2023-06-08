@@ -6,3 +6,4 @@ export * from "./inputs";
 export * from "./skeletons";
 export * from "./forms";
 export * from "./errorMessages";
+export * from "./labels";
