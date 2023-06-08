@@ -1,5 +1,6 @@
 import { FC, useRef, useEffect, useState } from "react";
-import { Button, Input, FormErrorMessage } from "~/components";
+import { Button, Input, FormErrorMessage} from "~/components";
+import { Label } from "~/components/labels/label"
 import { CloseIcon } from "~/assets";
 import { useForm, Controller, SubmitHandler } from "react-hook-form";
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -32,6 +33,17 @@ const placeholders: string[] = [
     "Puesto del empleado",
     "Lenguajes de programación",
     "Tecnologías que maneja el empleado"
+];
+
+const labels: string[] = [
+    "Nombre",
+    "País",
+    "Estado",
+    "Ciudad",
+    "Años de Experiencia",
+    "Puesto",
+    "Lenguajes",
+    "Technologías"
 ];
 
 const ModalEmployeeForm: FC<ModalEmployeeFormProps> = ({show, className}): JSX.Element => {
@@ -126,11 +138,20 @@ const ModalEmployeeForm: FC<ModalEmployeeFormProps> = ({show, className}): JSX.E
                             render={({field, fieldState: {error}}) => {
                                 return(
                                     <>
+                                        <Label
+                                            htmlFor={labels[index]}
+                                            className={`
+                                                mx-2
+                                                ${(error && `text-ibm-magenta-50 after:content-['*']`)}`
+                                            }
+                                        >{labels[index]}
+                                        </Label>
                                         <Input
+                                            id={labels[index]}
                                             {...field}
                                             placeholder={placeholders[index]}
                                             className={`
-                                                my-3
+                                                mb-3 mt-1
                                                 ${(error && `border-2 border-ibm-magenta-50 outline-ibm-magenta-60`)}
                                                 placeholder:${error? `text-ibm-magenta-40` : `text-ibm-coolGray-50`}
                                                 placeholder:font-thin`
@@ -144,7 +165,8 @@ const ModalEmployeeForm: FC<ModalEmployeeFormProps> = ({show, className}): JSX.E
                                                 size="bg"
                                             >
                                                 {error.message as string}
-                                            </FormErrorMessage>}
+                                            </FormErrorMessage>
+                                        }
                                     </>
                                 );
                             }}
