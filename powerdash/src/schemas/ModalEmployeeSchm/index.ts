@@ -1,21 +1,20 @@
 import * as z from "zod";
 
 const ModalEmployeeSchm: z.ZodSchema = z.object({
-    employeeName: z.string().max(50).default(""),
-    employeeCountry: z.string().max(50).default(""),
-    employeeState: z.string().max(50).default(""),
-    employeeCity: z.string().max(50).default(""),
+    employeeName: z.string().max(50).nonempty("Este Campo es Obligatorio"),
+    employeeCountry: z.string().max(50).nonempty("Este Campo es Obligatorio"),
+    employeeState: z.string().max(50).nonempty("Este Campo es Obligatorio"),
+    employeeCity: z.string().max(50).nonempty("Este Campo es Obligatorio"),
     yearsXP: z.coerce.number().
         nonnegative("Solo se permiten números posivos").
         int("Solo números enteros").
-        safe().
-        default(0),
-    employeePosition: z.string().max(100).default(""),
+        safe(),
+    employeePosition: z.string().max(100).nonempty("Este Campo es Obligatorio"),
     programmingLanguages: z.coerce.string().
         array().
         max(50).
-        default([""]),
-    technologies: z.coerce.string().max(50).default("")
+        nonempty("Este Campo es Obligatorio"),
+    technologies: z.coerce.string().max(50).nonempty("Este Campo es Obligatorio")
 }).required();
 
 export default interface IModalEmployee

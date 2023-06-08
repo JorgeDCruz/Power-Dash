@@ -24,7 +24,7 @@ const Persons: NextPageWithLayout = (): JSX.Element => {
         <div>
             <ModalEmployeeForm
                 show={modal}
-                className="w-3/4 h-2/3"
+                className="w-3/4 h-5/6"
             />
             <Searchbar
                 className="mx-auto mt-8"

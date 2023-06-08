@@ -5,3 +5,4 @@ export * from "./search";
 export * from "./inputs";
 export * from "./skeletons";
 export * from "./forms";
+export * from "./errorMessages";
