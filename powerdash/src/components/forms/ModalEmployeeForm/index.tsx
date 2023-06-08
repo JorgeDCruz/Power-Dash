@@ -1,10 +1,11 @@
 import { FC, useRef, useEffect, useState } from "react";
 import { Button, Input, FormErrorMessage} from "~/components";
 import { Label } from "~/components/labels/label"
-import { CloseIcon } from "~/assets";
+import { CloseIcon, BeeIcon } from "~/assets";
 import { useForm, Controller, SubmitHandler } from "react-hook-form";
 import { zodResolver } from '@hookform/resolvers/zod';
 import { IModalEmployee, EmployeeSchema } from "~/schemas";
+import { cn } from "~/lib/utils";
 
 // (async () => {
 //     const response = await fetch(
@@ -105,14 +106,23 @@ const ModalEmployeeForm: FC<ModalEmployeeFormProps> = ({show, className}): JSX.E
 
     return(
         <dialog
-            className={className}
+            className={cn([className, `
+                backdrop:bg-gradient-to-tr
+                backdrop:from-ibm-blue-20
+                backdrop:to-ibm-cyan-60
+                backdrop:brightness-125
+                backdrop:opacity-50`])}
             ref={ref}
         >
             <div
                 className="
                     w-auto h-fit
-                    flex justify-end"
+                    flex justify-between"
             >
+                <BeeIcon
+                    className="
+                        w-fit h-12"
+                />
                 <Button
                     className="
                         w-14 h-12
