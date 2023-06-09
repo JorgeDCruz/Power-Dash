@@ -17,7 +17,7 @@ interface employee {
 //Funcion para procesar los datos
 //Si un dato viene vacio se le asigna un valor por defecto
 function processData(data: employee[], size: number){
-  let correctData: employee[] = [...data];
+  const correctData: employee[] = [...data];
 
   for(let i = 0; i < size; i++){
     if(correctData[i]?.employeeArea == ''){
