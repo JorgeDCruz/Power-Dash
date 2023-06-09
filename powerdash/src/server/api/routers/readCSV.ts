@@ -90,19 +90,25 @@ async function separateCSV(data: string){
     }
     //Falta el fix que Jairo hizo para la relacion de uno a muchos 
 
-    // const userID = existingUser?.id;
-    // const existingCertification = await prisma.certification.findFirst({where: {certificationName: <string>parsedData.data[i]?.certificationName, employeeId: userID}});
-    // if(!existingCertification){
-    //   prismaInsert = await prisma.certification.create({
-    //     data:{
-    //       certificationName: <string>parsedData.data[i]?.certificationName,
-    //       expirationDate: new Date(<string>parsedData.data[i]?.expirationDate),
-    //       certificationType: <string>parsedData.data[i]?.certificationType,
-    //       marketCertification: false,
-    //       employeeId: <string>userID,
-    //     }
-    //   })
-    // }
+  const userID = existingUser?.id;
+  const existingCertification = await prisma.certification.findFirst({where: {certificationName: <string>correctedData[i]?.certificationName, employeeId: userID}});
+  if(!existingCertification){
+    const newCertification = await prisma.employee.update({
+      where: { employeeID: <string>correctedData[i]?.employeeID },
+      include:{ certifications: true },
+      data:{
+        certifications: {
+          create:[
+            {
+              certificationName:  <string>correctedData[i]?.certificationName,
+              certificationType: <string>correctedData[i]?.certificationType,
+              expirationDate: new Date (<string>correctedData[i]?.expirationDate),
+            },
+          ],
+        }
+      }
+  })
+    }
   }
 }
 
