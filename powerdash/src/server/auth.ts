@@ -6,10 +6,11 @@ import {
 } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import { PrismaAdapter } from "@next-auth/prisma-adapter";
-import { env } from "~/env.mjs";
 import { prisma } from "~/server/db";
-import { SupabaseAdapter } from "@next-auth/supabase-adapter";
-import * as process from "process";
+import { PrismaClient } from "@prisma/client";
+import helpers from "../utils/middleware/helpers"
+
+const prismaDB = new PrismaClient();
 
 /**
  * Module augmentation for `next-login` types. Allows us to add custom properties to the `session`
@@ -25,11 +26,6 @@ declare module "next-auth" {
       // role: UserRole;
     } & DefaultSession["user"];
   }
-
-  // interface User {
-  //   // ...other properties
-  //   // role: UserRole;
-  // }
 }
 
 export const authOptions: NextAuthOptions = {
@@ -58,12 +54,14 @@ export const authOptions: NextAuthOptions = {
           email: string;
           password: string;
         };
-
-        //Ahora mismo no es posible checar a la base de datos, pero aquí debería de ejecutarse la lógica, la cual es la siguiente:
-        if (email !== "A01634536@tec.mx" && password !== "123") {
-          return null;
+        const existingUser = await prismaDB.user.findUnique({ where: { email } });
+        if(existingUser !== null) {
+          const match = await helpers.matchPassword(password, existingUser.password || '')
+          if(match) {
+            return{id: existingUser.id, name:  existingUser.name, email: existingUser.email}
+          }
         }
-        return { id: "1", name: "Jorge Cruz", email: "A01634536@tec.mx" };
+        return null;
       },
     }),
   ],
@@ -81,7 +79,7 @@ export const authOptions: NextAuthOptions = {
   //Especificamos que ciertas funciones nos llevarán a ciertas vistas
   pages: {
     //Cuando se ejecute la función por defecto de signIn que ofrece Next-auth se redirigirá a la vista creada por nosotros
-    signIn: "/auth/signin",
+    signIn: "/login",
   },
 };
 

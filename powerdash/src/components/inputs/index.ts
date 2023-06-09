@@ -1,2 +1,2 @@
-import GeneralInput from "~/components/inputs/GeneralInput";
-export { GeneralInput };
+import { Input } from "~/components/inputs/Input";
+export { Input };
