@@ -54,8 +54,10 @@ const Home: NextPage = () => {
   const [viewGraph, setViewGraph] = useState<boolean>(false);
   const [data, setData] = useState<Data>();
 
+  //const graphData = api.gData.dataGraph.useQuery();
 
   useEffect(() => {
+    //console.log("Data client: ", graphData);
     setData({labels: ["Certifications"],
       datasets: [
         {
@@ -64,7 +66,7 @@ const Home: NextPage = () => {
           backgroundColor: 'rgba(255, 99, 132, 0.5)',
         },
         {
-          label: graphInfo.yAxis,
+          label: "graphInfo.yAxis",
           data: [300],
           backgroundColor: 'rgba(53, 162, 235, 0.5)',
         }
@@ -132,9 +134,9 @@ const Home: NextPage = () => {
           <form onSubmit={handleSubmitGraph}>
             <h1>Certifications: </h1>
             <h2>X Axis: </h2>
-            <input value={"java"} onChange={({ target }) => {setGraphInfo({ ...graphInfo, xAxis: target.value });} } type="radio" name="java" id="java"></input>
+            <input value={"java"} onChange={({ target }) => {setGraphInfo({ ...graphInfo, xAxis: target.value });} } type="checkbox" name="java" id="java"></input>
             <label> Java</label><br></br>
-            <input value={"cybersecurity"} onChange={({ target }) => setGraphInfo({ ...graphInfo, xAxis: target.value })} type="radio" name="cybersecurity" id="cybersecurity"></input>
+            <input value={"cybersecurity"} onChange={({ target }) => setGraphInfo({ ...graphInfo, xAxis: target.value })} type="checkbox" name="cybersecurity" id="cybersecurity"></input>
             <label> Cybersecurity</label><br></br>
             <br></br>
 
