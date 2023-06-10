@@ -12,7 +12,17 @@ import { AddUser } from "~/assets";
 import { api } from "~/utils/api";
 import { idGenerator } from "~/lib/utils";
 
-const test: string[] = ["1", "2", "3", "4", "5", "6"]
+interface IEmployee {
+    name: string;
+}
+const test: IEmployee[] = [
+    {name: "El PEPE"},
+    {name: "ETESETCH"},
+    {name: "TILIN"},
+    {name: "Vicente Javier Viera Guízar"},
+    {name: "5"},
+    {name: "6"}
+];
 
 const Persons: NextPageWithLayout = (): JSX.Element => {
     const [topic, setTopic] = useState<string>("");
@@ -74,6 +84,7 @@ const Persons: NextPageWithLayout = (): JSX.Element => {
                         {test.map(employee => (
                             <Card
                                 key={idGenerator()}
+                                employee={employee}
                                 className="
                                     w-11/12 h-1/6
                                     mx-auto my-3"
