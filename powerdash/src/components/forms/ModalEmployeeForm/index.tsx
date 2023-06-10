@@ -1,10 +1,10 @@
-import { FC, useRef, useEffect, useState } from "react";
+import {type FC, useRef, useEffect, useState } from "react";
 import { Button, Input, FormErrorMessage} from "~/components";
 import { Label } from "~/components/labels/label"
 import { CloseIcon, BeeIcon } from "~/assets";
-import { useForm, Controller, SubmitHandler } from "react-hook-form";
+import { useForm, Controller, type SubmitHandler } from "react-hook-form";
 import { zodResolver } from '@hookform/resolvers/zod';
-import { IModalEmployee, EmployeeSchema } from "~/schemas";
+import { type IModalEmployee, EmployeeSchema } from "~/schemas";
 import { cn } from "~/lib/utils";
 
 // (async () => {
@@ -24,7 +24,7 @@ import { cn } from "~/lib/utils";
 interface ModalEmployeeFormProps {
     show: boolean;
     className?: string;
-};
+}
 
 type InputNames = `${number}` | `${number}.${string}`;
 
@@ -85,6 +85,7 @@ const ModalEmployeeForm: FC<ModalEmployeeFormProps> = ({show, className}): JSX.E
 
     const onSubmit: SubmitHandler<IModalEmployee> = (data: IModalEmployee): void => {
         console.log(data)
+        const languajes: string[] = data.programmingLanguages.split(/[,;:\.\-_\s]/) as string[];
         
         console.log(data.programmingLanguages)
     };
@@ -111,7 +112,8 @@ const ModalEmployeeForm: FC<ModalEmployeeFormProps> = ({show, className}): JSX.E
                 backdrop:from-ibm-blue-20
                 backdrop:to-ibm-cyan-60
                 backdrop:brightness-125
-                backdrop:opacity-50`])}
+                backdrop:opacity-50`
+            ])}
             ref={ref}
         >
             <div

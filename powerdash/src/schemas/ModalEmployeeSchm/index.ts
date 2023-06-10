@@ -14,6 +14,7 @@ const ModalEmployeeSchm: z.ZodSchema = z.object({
     technologies: z.coerce.string().max(50).nonempty("Este Campo es Obligatorio")
 }).required();
 
-export default interface IModalEmployee
-    extends z.infer<typeof ModalEmployeeSchm> {};
+type IModalEmployee = z.infer<typeof ModalEmployeeSchm>;
+
+export default IModalEmployee;
 export {ModalEmployeeSchm as EmployeeSchema};
