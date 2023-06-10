@@ -1,11 +1,11 @@
 import {type FC, useRef, useEffect, useState } from "react";
-import { Button, Input, FormErrorMessage} from "~/components";
+import { Button, Input, FormErrorMessage } from "~/components";
 import { Label } from "~/components/labels/label"
 import { CloseIcon, BeeIcon } from "~/assets";
 import { useForm, Controller, type SubmitHandler } from "react-hook-form";
 import { zodResolver } from '@hookform/resolvers/zod';
 import { type IModalEmployee, EmployeeSchema } from "~/schemas";
-import { cn } from "~/lib/utils";
+import { cn, idGenerator } from "~/lib/utils";
 
 // (async () => {
 //     const response = await fetch(
@@ -81,13 +81,15 @@ const ModalEmployeeForm: FC<ModalEmployeeFormProps> = ({show, className}): JSX.E
         }
     });
 
-    const idGenerator = (): string => Date.now().toString(36) + Math.random().toString(36);
-
     const onSubmit: SubmitHandler<IModalEmployee> = (data: IModalEmployee): void => {
         console.log(data)
         const languajes: string[] = data.programmingLanguages.split(/[,;:\.\-_\s]/) as string[];
         
         console.log(data.programmingLanguages)
+        setActive(prev => !prev);
+        reset();
+
+        return;
     };
 
     useEffect(() => {

@@ -1,9 +1,18 @@
 import { useState, useEffect } from "react";
-import { Searchbar } from "~/components";
 import { NextPageWithLayout } from "~/pages/page";
-import { GeneralLayout, Button, ModalEmployeeForm } from "~/components";
+import { 
+    GeneralLayout,
+    Button,
+    ModalEmployeeForm,
+    Searchbar,
+    Card,
+    CardContainer
+} from "~/components";
 import { AddUser } from "~/assets";
 import { api } from "~/utils/api";
+import { idGenerator } from "~/lib/utils";
+
+const test: string[] = ["1", "2", "3", "4", "5", "6"]
 
 const Persons: NextPageWithLayout = (): JSX.Element => {
     const [topic, setTopic] = useState<string>("");
@@ -12,51 +21,69 @@ const Persons: NextPageWithLayout = (): JSX.Element => {
     const mutation = api.search.searchData.useMutation();
 
     useEffect(() => {
-      //Hay que cambiar el "any" por el tipo del "onChange"
-      const fetchData = async <onChange,>(): Promise<void> => {
-        const data = mutation.mutate(topic);
-        console.log("Data: ", data);
-      };
-      fetchData();
+        //Hay que cambiar el "any" por el tipo del "onChange"
+        const fetchData = async <onChange,>(): Promise<void> => {
+            const data = mutation.mutate(topic);
+            console.log("Data: ", data);
+        };
+        fetchData();
     }, [topic]);
 
-      return (
-          <div>
-              <ModalEmployeeForm
-                  show={modal}
-                  className="w-3/4 h-5/6"
-              />
-              <Searchbar
-                  className="mx-auto mt-8"
-                  searchTopics={["AWAaaaaaaaa", "OWO", "UWU", "7U7", "UNU", "T_T", ":3", "EWE"]}
-                  setTopic={setTopic}
-              />
-              <Button
-                  after="Agregar Empleado"
-                  onClick={() => setModal(prev => !prev)}
-                  className="
-                      w-fit h-10
-                      bg-[#f2f4f8]
-                      text-[#0f62fe]
-                      transition-all duration-200 ease
-                      group
-                      hover:after:text-[#0043ce]
-                      hover:bg-[#dde1e6]
-                      hover:shadow-md
-                      sm:w-[30%]
-                      sm:after:content-[attr(after)] after:w-fit after:text-xm after:font-medium
-                      after:line-clamp-1 after:text-clip"
-              >
-                  <AddUser
-                      className="
-                          w-fit h-full min-w-[50px]
-                          fill-[#0f62fe]
-                          transition-all duration-200 ease
-                          group-hover:fill-[#0043ce]"
-                  />
-              </Button>
-          </div>
-        );
+    return (
+        <div className="w-full h-screen overflow-hidden">
+            <ModalEmployeeForm
+                show={modal}
+                className="w-3/4 h-5/6"
+            />
+            <Searchbar
+                className="mx-auto mt-8"
+                searchTopics={["AWAaaaaaaaa", "OWO", "UWU", "7U7", "UNU", "T_T", ":3", "EWE"]}
+                setTopic={setTopic}
+            />
+            <Button
+                after="Agregar Empleado"
+                onClick={() => setModal(prev => !prev)}
+                className="
+                    w-fit h-10
+                    bg-[#f2f4f8]
+                    text-[#0f62fe]
+                    transition-all duration-200 ease
+                    group
+                    hover:after:text-[#0043ce]
+                    hover:bg-[#dde1e6]
+                    hover:shadow-md
+                    sm:w-[30%]
+                    sm:after:content-[attr(after)] after:w-fit after:text-xm after:font-medium
+                    after:line-clamp-1 after:text-clip"
+            >
+                <AddUser
+                    className="
+                        w-fit h-full min-w-[50px]
+                        fill-[#0f62fe]
+                        transition-all duration-200 ease
+                        group-hover:fill-[#0043ce]"
+                />
+            </Button>
+            <div className="
+                w-full h-full
+                mt-8
+                flex items-start"
+            >
+                <CardContainer>
+                    <>
+                        {test.map(employee => (
+                            <Card
+                                key={idGenerator()}
+                                className="
+                                    w-11/12 h-1/6
+                                    mx-auto my-3"
+                            />
+                        ))}
+                    </>
+                </CardContainer>
+            </div>
+        </div>
+    );
 }
 
 Persons.getLayout = (page) => (
