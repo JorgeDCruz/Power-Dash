@@ -80,12 +80,6 @@ const Home: NextPageWithLayout<
         />
       </Head>
       <main className="flex min-h-screen flex-col items-center justify-center">
-        <input
-          className=""
-          onChange={handleCSV}
-          accept=".csv, .txt"
-          type="file"
-        />
         <h1>{props.user.name}</h1>
       </main>
     </>
