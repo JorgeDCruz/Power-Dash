@@ -34,9 +34,9 @@ const Persons: NextPageWithLayout = (): JSX.Element => {
     useEffect(() => {
         //Hay que cambiar el "any" por el tipo del "onChange"s
         const fetchData = async <onChange,>(): Promise<void> => {
-            //console.log(topic)
-            const data = mutation.mutateAsync(topic);
-            let newData = await data;
+            console.log(topic)
+            const data = await mutation.mutateAsync(topic);
+            console.log("Data: ", data[0]?.employeeID);
         };
         fetchData();
     }, [topic]);
