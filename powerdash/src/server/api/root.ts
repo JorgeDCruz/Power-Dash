@@ -3,6 +3,7 @@ import { authRouter } from "~/server/api/routers/authenticationRoute";
 import { CSV_Router } from "./routers/readCSV";
 import { searchRouter } from "./routers/searchData";
 import { crudRouter } from "./routers/crudRoute";
+import { certificationCrudRouter } from "./routers/certiCrudRoute";
 
 /**
  * This is the primary router for your server.
@@ -13,7 +14,8 @@ export const appRouter = createTRPCRouter({
   auth: authRouter,
   CSV: CSV_Router,
   search: searchRouter,
-  CRUDrouter: crudRouter
+  CRUDrouter: crudRouter,
+  certCRUD: certificationCrudRouter,
 });
 
 // export type definition of API
