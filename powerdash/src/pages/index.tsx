@@ -2,7 +2,6 @@ import { GetServerSideProps, InferGetServerSidePropsType } from "next";
 import Head from "next/head";
 import { ChangeEvent } from "react";
 import { api } from "~/utils/api";
-import { signOut } from "next-auth/react";
 import { getFile } from "~/utils/aws/S3_Bucket";
 import { GeneralLayout } from "~/components";
 import { NextPageWithLayout } from "~/pages/page";
@@ -88,14 +87,6 @@ const Home: NextPageWithLayout<
           type="file"
         />
         <h1>{props.user.name}</h1>
-        <button
-          className="rounded bg-blue-500 px-4 py-2 font-bold text-white hover:bg-blue-700"
-          onClick={() => {
-            signOut();
-          }}
-        >
-          Cerrar sesion
-        </button>
       </main>
     </>
   );
