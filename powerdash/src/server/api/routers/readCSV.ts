@@ -1,4 +1,4 @@
-import { object, z } from "zod";
+import { z } from "zod";
 import { createTRPCRouter, publicProcedure } from "~/server/api/trpc";
 import { PrismaClient } from "@prisma/client";
 import Papa, {ParseResult} from "papaparse"
@@ -12,6 +12,36 @@ interface employee {
   certificationName: string;
   expirationDate: string;
   certificationType: string;
+}
+
+//Funcion para procesar los datos
+//Si un dato viene vacio se le asigna un valor por defecto
+function processData(data: employee[], size: number){
+  const correctData: employee[] = [...data];
+
+  for(let i = 0; i < size; i++){
+    if(correctData[i]?.employeeArea == ''){
+      correctData[i]!.employeeArea = "Unknown work area";
+    }
+
+    if(correctData[i]?.work_location == ''){
+      correctData[i]!.work_location = "Guadalajara, JAL, Mexico";
+    }
+    
+    if(correctData[i]?.certificationName == ''){
+      correctData[i]!.certificationName = "Unknown certification";
+    }
+
+    if(correctData[i]?.expirationDate == ''){
+      correctData[i]!.expirationDate = "1/1/2000";
+    }
+
+    if(correctData[i]?.certificationType == ''){
+      correctData[i]!.certificationType = "Unknown";
+    }
+
+  }
+  return correctData;
 }
 
 async function separateCSV(data: string){
@@ -37,38 +67,49 @@ async function separateCSV(data: string){
   };
   //Hay que separar los datos de work_location para poderlo subir a la DB
   const parsedData:ParseResult<employee>  = Papa.parse(data, config);
-  
   const size: number = parsedData.data.length;
   let prismaInsert;
-  
+
+  //Utilizaremos los datos postprocesamiento
+  const correctedData = processData(parsedData.data, size);
+
   for(let i = 0; i < size; i++){
-    //Separamos la "work_location" por comas
-    const locations = parsedData.data[i]?.work_location.split(",");
-    
-    const existingUser = await prisma.employee.findUnique({ where: { employeeID: <string>parsedData.data[i]?.employeeID } });
+    const locations = correctedData[i]?.work_location.split(",");
+    const existingUser = await prisma.employee.findUnique({ where: { employeeID: <string>correctedData[i]?.employeeID } });
 
     if(!existingUser){
       prismaInsert = await prisma.employee.create({
         data:{
-          employeeID: parsedData.data[i]?.employeeID as string,
+          employeeID: correctedData[i]?.employeeID as string,
           employeeCountry: locations?.[2] as string,
           employeeCity: locations?.[0] as string,
           employeeState: locations?.[1] as string,
-          employeeArea: parsedData.data[i]?.employeeArea as string,
+          employeeArea: correctedData[i]?.employeeArea as string,
         }
       })
     }
+    //Falta el fix que Jairo hizo para la relacion de uno a muchos 
 
-    const userID = existingUser?.id;
-    prismaInsert = await prisma.certification.create({
+  const userID = existingUser?.id;
+  const existingCertification = await prisma.certification.findFirst({where: {certificationName: <string>correctedData[i]?.certificationName, employeeId: userID}});
+  if(!existingCertification){
+    const newCertification = await prisma.employee.update({
+      where: { employeeID: <string>correctedData[i]?.employeeID },
+      include:{ certifications: true },
       data:{
-        certificationName: <string>parsedData.data[i]?.certificationName,
-        expirationDate: new Date(<string>parsedData.data[i]?.expirationDate),
-        certificationType: <string>parsedData.data[i]?.certificationType,
-        marketCertification: false,
-        employeeId: <string>userID,
+        certifications: {
+          create:[
+            {
+              certificationName:  <string>correctedData[i]?.certificationName,
+              certificationType: <string>correctedData[i]?.certificationType,
+              expirationDate: new Date (<string>correctedData[i]?.expirationDate),
+            },
+          ],
+        }
       }
-    })
+  })
+
+    }
   }
 }
 

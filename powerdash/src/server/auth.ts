@@ -6,9 +6,7 @@ import {
 } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import { PrismaAdapter } from "@next-auth/prisma-adapter";
-import { env } from "~/env.mjs";
 import { prisma } from "~/server/db";
-import * as process from "process";
 import { PrismaClient } from "@prisma/client";
 import helpers from "../utils/middleware/helpers"
 
@@ -34,6 +32,7 @@ export const authOptions: NextAuthOptions = {
   //Especificamos la estrategía que utilizaremos para guardar los datos de la sesión
   session: {
     strategy: "jwt",
+    maxAge: 10 * 24 * 60 * 60,
   },
   //Especificamos los proovedores que utilizaremos
   providers: [
