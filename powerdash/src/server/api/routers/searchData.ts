@@ -10,6 +10,7 @@ export const searchRouter = createTRPCRouter({
         .mutation(async (req) => {
             const {input} = req;
             const given_ID = input;
+
             //Hay que checar que nos regresa la query si no encuentra el dato
             const retrievedRecords = await prisma.employee.findMany({ where: {
                 OR: [

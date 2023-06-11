@@ -11,6 +11,7 @@ import {
 import { AddUser } from "~/assets";
 import { api } from "~/utils/api";
 import { idGenerator } from "~/lib/utils";
+import { Employee } from "@prisma/client";
 
 interface IEmployee {
     name: string;
@@ -31,11 +32,11 @@ const Persons: NextPageWithLayout = (): JSX.Element => {
     const mutation = api.search.searchData.useMutation();
 
     useEffect(() => {
-        //Hay que cambiar el "any" por el tipo del "onChange"
+        //Hay que cambiar el "any" por el tipo del "onChange"s
         const fetchData = async <onChange,>(): Promise<void> => {
-            console.log(topic)
-            const data = mutation.mutate(topic);
-            console.log("Data: ", data);
+            //console.log(topic)
+            const data = mutation.mutateAsync(topic);
+            let newData = await data;
         };
         fetchData();
     }, [topic]);
