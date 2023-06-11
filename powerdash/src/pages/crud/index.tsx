@@ -2,7 +2,7 @@ import { signIn } from "next-auth/react";
 import { FormEventHandler, useState } from "react";
 import { useRouter } from "next/router";
 import Div100vh from "react-div-100vh";
-import { GeneralButton, GeneralInput, GeneralLayout } from "~/components";
+import { Button, GeneralLayout } from "~/components";
 import { NextPageWithLayout } from "~/pages/page";
 import { api } from "~/utils/api";
 
@@ -115,14 +115,13 @@ const Crud: NextPageWithLayout = (): JSX.Element => {
           />
         </div>
 
-        <GeneralButton
+        <Button
           className={`mt-4`}
           type={`submit`}
-          animated
-          style={`ghost`}
+          variant={`ghost`}
         >
           Iniciar sesión
-        </GeneralButton>
+        </Button>
       </form>
     </Div100vh>
   );
