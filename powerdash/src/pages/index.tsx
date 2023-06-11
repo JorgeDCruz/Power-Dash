@@ -2,7 +2,7 @@
 import { type NextPage } from "next";
 import Head from "next/head";
 import { useSession } from "next-auth/react";
-import { ChangeEvent } from "react";
+import { ChangeEvent, type ReactElement } from "react";
 import { api } from "~/utils/api";
 import {signOut} from "next-auth/react";
 import { getFile, insertFile } from "~/utils/aws/S3_Bucket";
@@ -41,36 +41,54 @@ interface myGraphProps{
   options: Options;
 }
 
+interface graphDataType{
+  xValue: number,
+  yValue: number
+}
+
 const Home: NextPage = () => {
   //Obtenemos los datos de la sesión actual a través de next-login "useSession"
   const { data: session, status } = useSession();
   //console.log("session", session);
 
   const mutation = api.CSV.CSV_Upload.useMutation();
-
+  const graphMutation = api.gData.dataGraph.useMutation();
   const bucketName = "ibmcsv";
 
+  //Graph states
   const [graphInfo, setGraphInfo] = useState({ xAxis: "", yAxis: "", type: ""});
   const [viewGraph, setViewGraph] = useState<boolean>(false);
   const [data, setData] = useState<Data>();
 
-  //const graphData = api.gData.dataGraph.useQuery();
+  const [graphs, setGraphs] = useState<graphDataType[]>();
 
   useEffect(() => {
-    //console.log("Data client: ", graphData);
-    setData({labels: ["Certifications"],
+    //Creamos una funcion para traernos los datos del mutate asincrono
+    const fetchData = async():Promise<void> =>{
+      let newData;
+      //En el momento que los datos no esten vacios se manda a llamar a la ruta
+      if(graphInfo.xAxis !== '' && graphInfo.yAxis !== ''){
+        const graphData = graphMutation.mutateAsync(graphInfo);
+        newData = await graphData;
+      }
+
+      //Creamos los datos para la grafica
+      setData({labels: ["Certifications"],
       datasets: [
         {
           label: graphInfo.xAxis,
-          data: [100],
+          data: [newData?.xValue as number],
           backgroundColor: 'rgba(255, 99, 132, 0.5)',
         },
         {
-          label: "graphInfo.yAxis",
-          data: [300],
+          label: graphInfo.yAxis,
+          data: [newData?.yValue as number],
           backgroundColor: 'rgba(53, 162, 235, 0.5)',
         }
       ]})
+    }
+    //Ejecutamos la funcion de fetch para la ruta
+    fetchData();
   },[graphInfo])
   
   ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
@@ -110,7 +128,7 @@ const Home: NextPage = () => {
   const MyChart: FC<myGraphProps> = ({data, options}) => {
     return (
       <div>
-        <h2>My Chart</h2>
+        <h2>Certification Chart</h2>
         <Bar data={data} options={options} />
       </div>
     );
@@ -120,7 +138,11 @@ const Home: NextPage = () => {
     e.preventDefault();
     //Para cambiar el estado actual de la variable de la grafica
     setViewGraph(prev => !prev);
+    setGraphs([...graphs])
   };
+
+
+
 
   return (
     <>
@@ -146,15 +168,10 @@ const Home: NextPage = () => {
             <input value={"cybersecurity"} onChange={({ target }) => setGraphInfo({ ...graphInfo, yAxis: target.value })} type="checkbox" name="cybersecurity" id="cybersecurity"></input>
             <label> Cybersecurity</label><br></br>
             <br></br>
-
-            <h1>Graph Type</h1>
-            <input value={graphInfo.type} onChange={({ target }) => setGraphInfo({ ...graphInfo, type: target.value })} type="checkbox" name="scatter" id="scatter"></input>
-            <label> Scatter </label><br></br>
-            <input value={graphInfo.type} onChange={({ target }) => setGraphInfo({ ...graphInfo, type: target.value })} type="checkbox" name="horizontal" id="horizontal"></input>
-            <label> Horizontal </label><br></br>
-            <button className="border-2 border-black" type="submit">OK</button>
+            <button className="border-2 border-black" type="submit">Crear Grafica</button>
           </form>
           <div>
+            <br></br>
             {viewGraph && <MyChart data={data as Data} options={options}/>}
           </div>
         </div>

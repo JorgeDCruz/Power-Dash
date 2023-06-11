@@ -19,13 +19,14 @@ export const graphRouter = createTRPCRouter({
             yAxis: z.string(),
             type: z.string()
         }))
-        .query(async (req) => {
+        .mutation(async (req) => {
             const { input } = req;
             //Debido a que no tenemos tiempo para recopilar los datos y procesarlos optamos por regresar dummy data
             //Si se llegase a dar el tiempo se deberian de hacer 2 consultas a la base de datos y contar cuantos valores regresa
             const xValue = getRandom(100, 500);
             const yValue = getRandom(100, 500);
-            let values = {xValue, yValue};
+            const values = {xValue, yValue};
+
             return values;
         })
 });
