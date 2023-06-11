@@ -16,7 +16,21 @@ interface CardProps {
     employee: IEmployee;
 }
 
-const Card = React.forwardRef<HTMLDivElement, CardProps>(
+const Card = React.forwardRef<
+  HTMLDivElement,
+  React.HTMLAttributes<HTMLDivElement>
+>(({ className, ...props }, ref) => (
+  <div
+    ref={ref}
+    className={cn(
+      "rounded-lg border bg-card text-card-foreground shadow-sm",
+      className
+    )}
+    {...props}
+  />
+))
+
+const CardForm = React.forwardRef<HTMLDivElement, CardProps>(
     ({ className, employee: {name}, ...props }, ref) => (
         <div
             ref={ref}
@@ -60,6 +74,7 @@ const Card = React.forwardRef<HTMLDivElement, CardProps>(
         </div>
     )
 )
+CardForm.displayName = "CardForm"
 Card.displayName = "Card"
 
 const CardContainer: FC<PropsWithChildren<CardContainerProps>> = ({className, children}): JSX.Element => {
@@ -142,4 +157,4 @@ const CardFooter = React.forwardRef<
 ))
 CardFooter.displayName = "CardFooter"
 
-export { Card, CardContainer, CardHeader, CardFooter, CardTitle, CardDescription, CardContent }
+export { Card, CardForm, CardContainer, CardHeader, CardFooter, CardTitle, CardDescription, CardContent }

@@ -5,7 +5,7 @@ import {
     Button,
     ModalEmployeeForm,
     Searchbar,
-    Card,
+    CardForm,
     CardContainer
 } from "~/components";
 import { AddUser } from "~/assets";
@@ -84,7 +84,7 @@ const Persons: NextPageWithLayout = (): JSX.Element => {
                 <CardContainer>
                     <>
                         {test.map(employee => (
-                            <Card
+                            <CardForm
                                 key={idGenerator()}
                                 employee={employee}
                                 className="
