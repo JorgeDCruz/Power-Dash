@@ -1,21 +1,15 @@
-import {
-  ChartBarIcon,
-  UserGroupIcon,
-  UserIcon,
-} from "@heroicons/react/24/outline";
+import { ChartBarIcon, UserIcon } from "@heroicons/react/24/outline";
 import { Button, Input } from "~/components";
 import Label from "~/components/labels";
-import { ChangeEvent, useRef, useState } from "react";
+import { ChangeEvent, useState } from "react";
 import { api } from "~/utils/api";
-import { useSession } from "next-auth/react";
+import { signOut } from "next-auth/react";
 
 interface SidebarProps {
   userName: string;
 }
 
 const Sidebar = ({ userName }: SidebarProps) => {
-  const { data: session, status } = useSession();
-
   const mutation = api.CSV.CSV_Upload.useMutation();
   const [files, setFiles] = useState<FileList | null>(null);
 
@@ -69,26 +63,35 @@ const Sidebar = ({ userName }: SidebarProps) => {
             </Button>
           </div>
           <div>
-            <Label>Subir CSV</Label>
-            <div className={"flex space-x-1"}>
-              <Input
-                type={"file"}
-                onChange={(e) => {
-                  setFiles(e.target.files);
-                }}
-                accept=".csv"
-              />
-              <Button
-                disabled={files === null}
-                onClick={() => {
-                  handleCSV({
-                    target: { files },
-                  } as ChangeEvent<HTMLInputElement>);
-                }}
-              >
-                Subir
-              </Button>
+            <div>
+              <Label>Subir CSV</Label>
+              <div className={"flex space-x-1"}>
+                <Input
+                  type={"file"}
+                  onChange={(e) => {
+                    setFiles(e.target.files);
+                  }}
+                  accept=".csv"
+                />
+                <Button
+                  disabled={files === null}
+                  onClick={() => {
+                    handleCSV({
+                      target: { files },
+                    } as ChangeEvent<HTMLInputElement>);
+                  }}
+                >
+                  Subir
+                </Button>
+              </div>
             </div>
+            <Button
+              onClick={() => signOut()}
+              className={"mt-4 w-full"}
+              variant={"destructive"}
+            >
+              <h1>Cerrar sesion</h1>
+            </Button>
           </div>
         </div>
       </div>
