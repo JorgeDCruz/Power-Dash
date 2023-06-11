@@ -33,6 +33,7 @@ const Persons: NextPageWithLayout = (): JSX.Element => {
     useEffect(() => {
         //Hay que cambiar el "any" por el tipo del "onChange"
         const fetchData = async <onChange,>(): Promise<void> => {
+            console.log(topic)
             const data = mutation.mutate(topic);
             console.log("Data: ", data);
         };
@@ -40,7 +41,7 @@ const Persons: NextPageWithLayout = (): JSX.Element => {
     }, [topic]);
 
     return (
-        <div className="w-full h-screen overflow-hidden">
+        <div className="w-full h-screen sm:overflow-hidden">
             <ModalEmployeeForm
                 show={modal}
                 className="w-3/4 h-5/6"

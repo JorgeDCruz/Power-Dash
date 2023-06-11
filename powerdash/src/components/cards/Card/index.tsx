@@ -24,10 +24,10 @@ const Card = React.forwardRef<HTMLDivElement, CardProps>(
                 "rounded-lg border bg-card text-card-foreground shadow-sm",
                 "border-2 border-ibm-coolGray-60",
                 "text-lg font-medium text-ibm-coolGray-90 text-opacity-100",
-                "flex justify-between",
+                "flex flex-wrap justify-between",
+                "overflow-clip",
                 "transition-all duration-200 ease-in",
-                "group",
-                `hover:bg-ibm-magenta-50
+                `hover:bg-ibm-magenta-40
                 hover:text-ibm-coolGray hover:underline
                 hover:cursor-pointer
                 hover:scale-105 hover:shadow-sm`,
@@ -44,11 +44,18 @@ const Card = React.forwardRef<HTMLDivElement, CardProps>(
             </p>
             <div
                 className="
-                    w-fit h-full
-                    flex items-center justify-around"
+                    w-1/4 h-full
+                    flex items-center justify-evenly"
             >
-                <EditIcon/>
-                <DeleteIcon/>
+                <EditIcon
+                    className="
+                        w-8 h-full
+                        hover:fill-ibm-blue-70"
+                />
+                <DeleteIcon
+                    className="
+                        w-8 h-full
+                        hover:fill-ibm-magenta-90"/>
             </div>
         </div>
     )
