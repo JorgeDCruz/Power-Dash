@@ -1,17 +1,9 @@
-import {
-  GetServerSideProps,
-  InferGetServerSidePropsType,
-  type NextPage,
-} from "next";
+import { GetServerSideProps, InferGetServerSidePropsType } from "next";
 import Head from "next/head";
-import { useSession } from "next-auth/react";
 import { ChangeEvent } from "react";
 import { api } from "~/utils/api";
-import { signOut } from "next-auth/react";
-import { getFile, insertFile } from "~/utils/aws/S3_Bucket";
-import { type } from "os";
+import { getFile } from "~/utils/aws/S3_Bucket";
 import { GeneralLayout } from "~/components";
-import Persons from "~/pages/persons";
 import { NextPageWithLayout } from "~/pages/page";
 import { authOptions } from "~/server/auth";
 import { getServerSession } from "next-auth";
@@ -41,11 +33,14 @@ const Home: NextPageWithLayout<
     if (input) {
       const file: File | undefined = input[0];
 
-      try{
+      try {
         //GetFile nos regresará el contenido del csv como un string
-        const responseData: string = await getFile(bucketName, file?.name as string);
+        const responseData: string = await getFile(
+          bucketName,
+          file?.name as string
+        );
         mutation.mutate(responseData);
-      }catch(error){
+      } catch (error) {
         //Si llegase a dar un error en la obtención del archivo, se utilizará el local
         console.log("Error retrieving the object: ", error);
         console.log("Using the locally given file instead");
@@ -55,10 +50,10 @@ const Home: NextPageWithLayout<
           text = e.target?.result as string;
           console.log("Text: ", text);
           mutation.mutate(text);
-          console.log("Success")
+          console.log("Success");
           return;
         };
-        reader.readAsText((file !== undefined)? file : new Blob);
+        reader.readAsText(file !== undefined ? file : new Blob());
       }
       let text: string;
 
@@ -85,21 +80,7 @@ const Home: NextPageWithLayout<
         />
       </Head>
       <main className="flex min-h-screen flex-col items-center justify-center">
-        <input
-          className=""
-          onChange={handleCSV}
-          accept=".csv, .txt"
-          type="file"
-        />
         <h1>{props.user.name}</h1>
-        <button
-          className="rounded bg-blue-500 px-4 py-2 font-bold text-white hover:bg-blue-700"
-          onClick={() => {
-            signOut();
-          }}
-        >
-          Cerrar sesion
-        </button>
       </main>
     </>
   );
