@@ -60,15 +60,21 @@ async function separateCSV(data: string){
     const userID = existingUser?.id;
     const existingCertification = await prisma.certification.findFirst({where: {certificationName: <string>parsedData.data[i]?.certificationName, employeeId: userID}});
     if(!existingCertification){
-      prismaInsert = await prisma.certification.create({
+      const newCertification = await prisma.employee.update({
+        where: { employeeID: <string>parsedData.data[i]?.employeeID },
+        include:{ certifications: true },
         data:{
-          certificationName: <string>parsedData.data[i]?.certificationName,
-          expirationDate: new Date(<string>parsedData.data[i]?.expirationDate),
-          certificationType: <string>parsedData.data[i]?.certificationType,
-          marketCertification: false,
-          employeeId: <string>userID,
+            certifications: {
+                create:[
+                    {
+                        certificationName:  <string>parsedData.data[i]?.certificationName,
+                        certificationType: <string>parsedData.data[i]?.certificationType,
+                        expirationDate: new Date (<string>parsedData.data[i]?.expirationDate),
+                    },
+                ],
+            }
         }
-      })
+    })
     }
   }
 }
