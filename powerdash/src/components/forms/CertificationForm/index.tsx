@@ -4,10 +4,12 @@ import { Label } from "~/components/labels/label";
 import { CloseIcon, BeeIcon } from "~/assets";
 import { useForm, Controller, type SubmitHandler } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { type IModalEmployee, EmployeeSchema } from "~/schemas";
+import { type IModalEmployee } from "~/schemas";
 import { cn, idGenerator } from "~/lib/utils";
+import { Transition } from "@headlessui/react";
+import { CertificationSchema } from "~/schemas/CertificationFormSchema";
 
-interface ModalEmployeeFormProps {
+interface CertificationFormProps {
   show: boolean;
   className?: string;
 }
@@ -15,58 +17,54 @@ interface ModalEmployeeFormProps {
 type InputNames = `${number}` | `${number}.${string}`;
 
 const fieldNames: string[] = [
-  "employeeName",
-  "employeeCountry",
-  "employeeState",
-  "employeeCity",
-  "yearsXP",
-  "employeePosition",
-  "programmingLanguages",
-  "technologies",
+  "certificationID",
+  "certificationName",
+  "certificationProvider",
+  "certificationStatus",
+  "certificationType",
+  "expirationDate",
+  "marketCertification",
 ];
 
 const placeholders: string[] = [
-  "Nombre del empleado",
-  "País de residencia del empleado",
-  "Estado de residencia del empleado",
-  "Ciudad de residencia del empleado",
-  "Años de experiencia",
-  "Puesto del empleado",
-  "Lenguajes de programación",
-  "Tecnologías que maneja el empleado",
+  "ID de la certificación",
+  "Nombre de la certificación",
+  "Proveedor de la certificación",
+  "Estado de la certificación",
+  "Tipo de certificación",
+  "Fecha de expiración",
+  "Mercado de la certificación",
 ];
 
 const labels: string[] = [
-  "Nombre",
-  "País",
-  "Estado",
-  "Ciudad",
-  "Años de Experiencia",
-  "Puesto",
-  "Lenguajes",
-  "Technologías",
+  "ID de la certificación",
+  "Nombre de la certificación",
+  "Proveedor de la certificación",
+  "Estado de la certificación",
+  "Tipo de certificación",
+  "Fecha de expiración",
+  "Mercado de la certificación",
 ];
 
-const ModalEmployeeForm: FC<ModalEmployeeFormProps> = ({
+const CertificationForm: FC<CertificationFormProps> = ({
   show,
   className,
 }): JSX.Element => {
-  const [active, setActive] = useState<boolean>(false);
+  const [active, setActive] = useState<boolean>(show);
   const ref = useRef<HTMLDialogElement>(null);
 
   const { handleSubmit, reset, control } = useForm<IModalEmployee>({
-    resolver: zodResolver(EmployeeSchema),
+    resolver: zodResolver(CertificationSchema),
     mode: "all",
     shouldFocusError: true,
     defaultValues: {
-      employeeName: "",
-      employeeCountry: "",
-      employeeState: "",
-      employeeCity: "",
-      yearsXP: 0,
-      employeePosition: "",
-      programmingLanguages: "",
-      technologies: "",
+      certificationID: "",
+      certificationName: "",
+      certificationProvider: "",
+      certificationStatus: "",
+      certificationType: 0,
+      expirationDate: "",
+      certificationMarket: "",
     },
   });
 
@@ -86,10 +84,6 @@ const ModalEmployeeForm: FC<ModalEmployeeFormProps> = ({
   };
 
   useEffect(() => {
-    setActive((prev) => !prev);
-  }, [show]);
-
-  useEffect(() => {
     const setActiveModal = (): void => {
       if (active) {
         ref.current?.showModal();
@@ -101,17 +95,24 @@ const ModalEmployeeForm: FC<ModalEmployeeFormProps> = ({
   }, [active]);
 
   return (
-    <dialog
+    <Transition
+      show={active}
+      enter="transition-opacity duration-300"
+      enterFrom="opacity-0"
+      enterTo="opacity-100"
+      leave="transition-opacity duration-300"
+      leaveFrom="opacity-100"
+      leaveTo="opacity-0"
       className={cn([
         className,
         `
+                 w-full
                 backdrop:bg-gradient-to-tr
                 backdrop:from-ibm-blue-20
                 backdrop:to-ibm-cyan-60
                 backdrop:opacity-50
                 backdrop:brightness-125`,
       ])}
-      ref={ref}
     >
       <div
         className="
@@ -132,7 +133,6 @@ const ModalEmployeeForm: FC<ModalEmployeeFormProps> = ({
                         hover:shadow-md"
           onClick={() => {
             setActive((prev) => !prev);
-            reset();
           }}
         >
           <CloseIcon
@@ -226,8 +226,8 @@ const ModalEmployeeForm: FC<ModalEmployeeFormProps> = ({
           />
         </div>
       </form>
-    </dialog>
+    </Transition>
   );
 };
 
-export default ModalEmployeeForm;
+export default CertificationForm;

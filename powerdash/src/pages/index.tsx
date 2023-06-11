@@ -3,7 +3,7 @@ import Head from "next/head";
 import { ChangeEvent } from "react";
 import { api } from "~/utils/api";
 import { getFile } from "~/utils/aws/S3_Bucket";
-import { GeneralLayout } from "~/components";
+import { CertificationForm, GeneralLayout } from "~/components";
 import { NextPageWithLayout } from "~/pages/page";
 import { authOptions } from "~/server/auth";
 import { getServerSession } from "next-auth";
@@ -80,7 +80,7 @@ const Home: NextPageWithLayout<
         />
       </Head>
       <main className="flex min-h-screen flex-col items-center justify-center">
-        <h1>{props.user.name}</h1>
+        <CertificationForm show={true} />
       </main>
     </>
   );
@@ -90,27 +90,3 @@ Home.getLayout = (page) => (
   <GeneralLayout userName={page.props.user.name}>{page}</GeneralLayout>
 );
 export default Home;
-
-// const AuthShowcase: React.FC = () => {
-//   const { data: sessionData } = useSession();
-
-//   const { data: secretMessage } = api.example.getSecretMessage.useQuery(
-//     undefined, // no input
-//     { enabled: sessionData?.user !== undefined }
-//   );
-
-//   return (
-//     <div className="flex flex-col items-center justify-center gap-4">
-//       <p className="text-center text-2xl text-white">
-//         {sessionData && <span>Logged in as {sessionData.user?.name}</span>}
-//         {secretMessage && <span> - {secretMessage}</span>}
-//       </p>
-//       <button
-//         className="rounded-full bg-white/10 px-10 py-3 font-semibold text-white no-underline transition hover:bg-white/20"
-//         onClick={sessionData ? () => void signOut() : () => void signIn()}
-//       >
-//         {sessionData ? "Sign out" : "Sign in"}
-//       </button>
-//     </div>
-//   );
-// };
