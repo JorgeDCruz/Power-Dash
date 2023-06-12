@@ -11,7 +11,7 @@ import {
   type Dispatch,
   type FormEvent
 } from "react";
-import { type NextPage } from "next";
+import { GetServerSideProps, type NextPage } from "next";
 import Head from "next/head";
 import { useSession, signOut } from "next-auth/react";
 import { api } from "~/utils/api";
@@ -22,6 +22,8 @@ import { cn } from "~/lib/utils";
 import { set } from "cypress/types/lodash";
 import { setgroups } from "process";
 import type { ReturnData } from "~/server/api/routers/graphRoute"
+import { getServerSession } from "next-auth";
+import { authOptions } from "~/server/auth";
 
 const xLabels: string[] = [
   "Java",
@@ -131,10 +133,6 @@ const options = {
   },
 }
 
-const Home2: NextPage = (): JSX.Element => {
-  const { data: session, status } = useSession();
-  const [axisSelect, setAxisSelect] = useState<AxisSelect[]>([]);
-  const [formSubmit, setFormSubmit] = useState<boolean>(false);
 
 export const getServerSideProps: GetServerSideProps = async ({ req, res }) => {
   const session = await getServerSession(req, res, authOptions);
@@ -147,6 +145,13 @@ export const getServerSideProps: GetServerSideProps = async ({ req, res }) => {
     },
   };
 };
+
+const Home2: NextPage = (): JSX.Element => {
+  const { data: session, status } = useSession();
+  const [axisSelect, setAxisSelect] = useState<AxisSelect[]>([]);
+  const [formSubmit, setFormSubmit] = useState<boolean>(false);
+
+
 
 
   const [graphs, setGraphs] = useState<GraphData[]>([]);
@@ -232,9 +237,10 @@ export const getServerSideProps: GetServerSideProps = async ({ req, res }) => {
       <form
         onSubmit={handleSubmit}
       >
-        {xLabels.map(label => {
+        {xLabels.map((label, index) => {
           return(
             <CheckBox
+            key = {index}
               formSubmit={formSubmit}
               label={label}
               value={label.toLowerCase()}
@@ -242,9 +248,10 @@ export const getServerSideProps: GetServerSideProps = async ({ req, res }) => {
             />
             );
           })}
-        {yLabels.map(label => {
+        {yLabels.map((label, index) => {
           return(
             <CheckBox
+              key = {index}
               formSubmit={formSubmit}
               label={label}
               value={label.toLowerCase()}
@@ -256,6 +263,7 @@ export const getServerSideProps: GetServerSideProps = async ({ req, res }) => {
           if(index>1){
             return(
               <MyChart  
+                key = {index}
                 data={graph}
                 options={options}
               />

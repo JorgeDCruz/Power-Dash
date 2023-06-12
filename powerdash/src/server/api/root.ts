@@ -16,7 +16,7 @@ export const appRouter = createTRPCRouter({
   CSV: CSV_Router,
   search: searchRouter,
   CRUDrouter: crudRouter,
-  gData: graphRouter
+  gData: graphRouter,
   certCRUD: certificationCrudRouter,
 });
 
