@@ -88,8 +88,7 @@ async function separateCSV(data: string){
         }
       })
     }
-    //Falta el fix que Jairo hizo para la relacion de uno a muchos 
-
+  //Falta el fix que Jairo hizo para la relacion de uno a muchos 
   const userID = existingUser?.id;
   const existingCertification = await prisma.certification.findFirst({where: {certificationName: <string>correctedData[i]?.certificationName, employeeId: userID}});
   if(!existingCertification){
