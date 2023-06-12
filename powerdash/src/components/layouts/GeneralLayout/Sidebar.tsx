@@ -4,9 +4,11 @@ import Label from "~/components/labels";
 import { ChangeEvent, useState } from "react";
 import { api } from "~/utils/api";
 import { signOut } from "next-auth/react";
+import { useRouter } from "next/router";
 import { getFile, insertFile } from "~/utils/aws/S3_Bucket";
 import { router } from "@trpc/server";
 import { useRouter } from "next/router";
+
 interface SidebarProps {
   userName: string;
 }
@@ -19,7 +21,7 @@ const Sidebar = ({ userName }: SidebarProps) => {
 
   const mutation = api.CSV.CSV_Upload.useMutation();
   const [files, setFiles] = useState<FileList | null>(null);
-
+  const { push } = useRouter();
   const handleCSV = async (e: ChangeEvent<HTMLInputElement>) => {
     const input: FileList | null = e.target.files;
     if(input) {
@@ -81,13 +83,21 @@ const Sidebar = ({ userName }: SidebarProps) => {
           className={`flex h-full w-full flex-col items-stretch justify-between space-y-2 py-2`}
         >
           <div className={`flex flex-col space-y-2`}>
-            <Button variant={`secondary`} className={`w-full`} onClick={() => router.push('/persons')}>
+            <Button
+              onClick={() => push("/persons")}
+              variant={`secondary`}
+              className={`w-full`}
+            >
               <div className={`flex items-center space-x-2`}>
                 <UserIcon className={`w-4`} />
                 <h1>Personas</h1>
               </div>
             </Button>
-            <Button variant={`secondary`} className={`w-full`} onClick={() => router.push('/')}>
+            <Button
+              onClick={() => push("/")}
+              variant={`secondary`}
+              className={`w-full`}
+            >
               <div className={`flex items-center space-x-2`}>
                 <ChartBarIcon className={`w-4`} />
                 <h1>Certificaciones</h1>
