@@ -1,220 +1,262 @@
 // import { handleCSV } from "~/utils/functions";
+import {
+  FormEventHandler,
+  useState,
+  useEffect,
+  useRef,
+  type FC,
+  type ChangeEvent,
+  type SetStateAction,
+  type Dispatch,
+  type FormEvent
+} from "react";
 import { type NextPage } from "next";
 import Head from "next/head";
-import { useSession } from "next-auth/react";
-import { ChangeEvent, type ReactElement } from "react";
+import { useSession, signOut } from "next-auth/react";
 import { api } from "~/utils/api";
-import {signOut} from "next-auth/react";
-import { getFile, insertFile } from "~/utils/aws/S3_Bucket";
-import { type } from "os";
 import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend } from 'chart.js';
 import { Bar } from 'react-chartjs-2';
-import { FormEventHandler, useState, FC, useEffect } from "react";
-import { bool } from "aws-sdk/clients/signer";
+import { Input, Button } from "~/components"
+import { cn } from "~/lib/utils";
+import { set } from "cypress/types/lodash";
+import { setgroups } from "process";
+import type { ReturnData } from "~/server/api/routers/graphRoute"
 
-interface datasetType{
+const xLabels: string[] = [
+  "Java",
+  "C++",
+  "Javascript",
+  "Rust"
+];
+
+const yLabels: string[] = [
+  "Go",
+  "C",
+  "TypeScript",
+  "Ruby"
+];
+
+interface CheckBoxProps {
+  className?: string;
+  value: string;
   label: string;
-  data: number[];
-  backgroundColor: string; //`rgb(${number}, ${number}, ${number}, ${number})`
+  type: "xChecks" | "yChecks";
+  formSubmit: boolean;
 }
 
-interface Data{
-  labels: string[];
-  datasets: datasetType[];
-}
+const CheckBox: FC<CheckBoxProps> = ({className, value, label, type, formSubmit}): JSX.Element => {
+  const [check, setCheck] = useState<boolean>(false);
+  const ref = useRef<HTMLInputElement>(null);
 
-interface Options{
+  useEffect(() => {
+    reset();
+  }, [formSubmit]);
+
+  const reset = (): void => setCheck(false);
+
+  const handleChange = (e: ChangeEvent<HTMLInputElement>): void => {
+    setCheck(prev => !prev);
+  }
+  return(
+    <>
+      <input
+        ref={ref}
+        className={cn([``, className])}
+        value={check? value : undefined}
+        name={value}
+        id={type==="xChecks"? "xChecks" : "yChecks"}
+        type="checkbox"
+        onChange={handleChange}
+        checked={check}
+      />
+      <label>{label}</label>
+    </>
+  );
+};
+
+interface IOptions {
   responsive: boolean;
   plugins: {
     legend: {
-      position: 'top'
+      position: "top";
     },
     title: {
-      display: boolean,
-      text: string
+      display: boolean;
+      text: string;
     }
-  };
+  }
 }
 
-interface myGraphProps{
-  data: Data;
-  options: Options;
+interface MyChartProps {
+  data: GraphData;
+  options: IOptions;
 }
 
-interface graphDataType{
-  xValue: number,
-  yValue: number
+const MyChart: FC<MyChartProps> = ({data, options}) => {
+  return (
+    <div>
+      <h2>Certification Chart</h2>
+      <Bar data={data} options={options} />
+    </div>
+  );
+};
+
+interface AxisSelect {
+  x: string[];
+  y: string[];
 }
 
-const Home: NextPage = () => {
-  //Obtenemos los datos de la sesión actual a través de next-login "useSession"
+interface GraphBarData {
+  label: string;
+  data: number[];
+  backgroundColor: string;
+}
+
+interface GraphData {
+  labels: string[];
+  datasets: GraphBarData[];
+}
+
+const options = {
+  responsive: true,
+  plugins: {
+    legend: {
+      position: 'top' as const,
+    },
+    title: {
+      display: true,
+      text: "Certifications",
+    },
+  },
+}
+
+const Home2: NextPage = (): JSX.Element => {
   const { data: session, status } = useSession();
-  //console.log("session", session);
+  const [axisSelect, setAxisSelect] = useState<AxisSelect[]>([]);
+  const [formSubmit, setFormSubmit] = useState<boolean>(false);
+
+  const [graphs, setGraphs] = useState<GraphData[]>([]);
+  const [graphIndex, setGraphIndex] = useState<number>(0);
+  const [graphBarValues, setGraphBarValues] = useState<ReturnData>({});
 
   const mutation = api.CSV.CSV_Upload.useMutation();
   const graphMutation = api.gData.dataGraph.useMutation();
   const bucketName = "ibmcsv";
 
-  //Graph states
-  const [graphInfo, setGraphInfo] = useState({ xAxis: "", yAxis: "", type: ""});
-  const [viewGraph, setViewGraph] = useState<boolean>(false);
-  const [data, setData] = useState<Data>();
-
-  const [graphs, setGraphs] = useState<graphDataType[]>();
-
   useEffect(() => {
-    //Creamos una funcion para traernos los datos del mutate asincrono
-    const fetchData = async():Promise<void> =>{
-      let newData;
-      //En el momento que los datos no esten vacios se manda a llamar a la ruta
-      if(graphInfo.xAxis !== '' && graphInfo.yAxis !== ''){
-        const graphData = graphMutation.mutateAsync(graphInfo);
-        newData = await graphData;
+    const getGraphData = async (): Promise<void> => {
+      setGraphBarValues(await graphMutation.mutateAsync({xAxis: "", yAxis: "", type: "", selects: xLabels.length*2}))
+      
+      const graphBarDataX: GraphBarData[] = [];
+      const graphBarDataY: GraphBarData[] = [];
+      
+      axisSelect[graphIndex-1]?.x.forEach((select, index) => {
+        graphBarDataX.push({
+          label: select,
+          data: [graphBarValues[index]] as number[],
+          backgroundColor: 'rgba(255, 99, 132, 0.5)'
+        });
+      });
+      axisSelect[graphIndex-1]?.y.forEach((select, index) => {
+        graphBarDataY.push({
+          label: select,
+          data: [graphBarValues[index+xLabels.length]] as number[],
+          backgroundColor: 'rgba(255, 99, 132, 0.5)'
+        });
+      });
+      
+      const graphBarDataFull: GraphBarData[] = [...graphBarDataX, ...graphBarDataY];
+      const currentGraph: GraphData = {
+        labels: ["Certificados"],
+        datasets: graphBarDataFull
       }
 
-      //Creamos los datos para la grafica
-      setData({labels: ["Certifications"],
-      datasets: [
-        {
-          label: graphInfo.xAxis,
-          data: [newData?.xValue as number],
-          backgroundColor: 'rgba(255, 99, 132, 0.5)',
-        },
-        {
-          label: graphInfo.yAxis,
-          data: [newData?.yValue as number],
-          backgroundColor: 'rgba(53, 162, 235, 0.5)',
-        }
-      ]})
+      setGraphs(prev => [...prev, currentGraph]);
     }
-    //Ejecutamos la funcion de fetch para la ruta
-    fetchData();
-  },[graphInfo])
+    getGraphData();
+  }, [formSubmit]);
+  
+  const getAxisValues = (axis: "x" | "y", elements: Element[]): string[] => {
+    if(axis === "x"){
+      const xValues = elements.map(element => {
+          if(element.attributes.item(2)?.value === "xChecks"){
+            return element.attributes.item(4)?.value;
+          }
+        })
+        return xValues.filter(current => (current!==undefined && current!=="")) as string[];
+      }else{
+        const yValues = elements.map(element => {
+          if(element.attributes.item(2)?.value === "yChecks"){
+            return element.attributes.item(4)?.value;
+          }
+        })
+        return yValues.filter(current => (current!==undefined && current!=="")) as string[];
+      }
+    }
+    
+    const handleSubmit: FormEventHandler = async (e: FormEvent<HTMLInputElement>): Promise<void> => {
+      e.preventDefault();
+
+      const inputValues: Element[] = Array.from(e.currentTarget.getElementsByTagName("input"));
+      setFormSubmit(prev => !prev);
+      setGraphIndex(prev => ++prev);
+      setAxisSelect((prev) => {
+        return [
+          ...prev,
+          {
+            x: getAxisValues("x", inputValues),
+            y: getAxisValues("y", inputValues)
+          }]
+        }
+      );  
+    }
   
   ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
-
-
-  const handleCSV = async(e: ChangeEvent<HTMLInputElement>) => {
-    const input: FileList | null = e.target.files;
-    if(input){
-      const file: File | undefined = input[0];
-      let text: string;
-
-      const reader = new FileReader();
-      reader.onload = (e: ProgressEvent<FileReader>): void => {
-        text = e.target?.result as string;
-        mutation.mutate(text);
-        console.log("Success")
-        return;
-      };
-      reader.readAsText((file)? file : new Blob);
-    }
-    return;
-  }
-
-  const options = {
-    responsive: true,
-    plugins: {
-      legend: {
-        position: 'top' as const,
-      },
-      title: {
-        display: true,
-        text: "Certifications",
-      },
-    },
-  }
-
-  const MyChart: FC<myGraphProps> = ({data, options}) => {
-    return (
+    
+    return(
       <div>
-        <h2>Certification Chart</h2>
-        <Bar data={data} options={options} />
-      </div>
-    );
-  };
-
-  const handleSubmitGraph: FormEventHandler<HTMLFormElement> = async (e) => { 
-    e.preventDefault();
-    //Para cambiar el estado actual de la variable de la grafica
-    setViewGraph(prev => !prev);
-    setGraphs([...graphs])
-  };
-
-
-
-
-  return (
-    <>
-      <Head>
-        <title>Dashboard IBM</title>
-        <meta name="description" content="Generated by create-t3-app" />
-        <link rel="icon" href="https://cdn-icons-png.flaticon.com/512/5969/5969083.png" />
-      </Head>
-      <main className="flex min-h-screen flex-col items-center justify-center">
-        <div>
-          <form onSubmit={handleSubmitGraph}>
-            <h1>Certifications: </h1>
-            <h2>X Axis: </h2>
-            <input value={"java"} onChange={({ target }) => {setGraphInfo({ ...graphInfo, xAxis: target.value });} } type="checkbox" name="java" id="java"></input>
-            <label> Java</label><br></br>
-            <input value={"cybersecurity"} onChange={({ target }) => setGraphInfo({ ...graphInfo, xAxis: target.value })} type="checkbox" name="cybersecurity" id="cybersecurity"></input>
-            <label> Cybersecurity</label><br></br>
-            <br></br>
-
-            <h2>Y Axis: </h2>
-            <input value={"java"} onChange={({ target }) => setGraphInfo({ ...graphInfo, yAxis: target.value })} type="checkbox" name="java" id="java"></input>
-            <label> Java</label><br></br>
-            <input value={"cybersecurity"} onChange={({ target }) => setGraphInfo({ ...graphInfo, yAxis: target.value })} type="checkbox" name="cybersecurity" id="cybersecurity"></input>
-            <label> Cybersecurity</label><br></br>
-            <br></br>
-            <button className="border-2 border-black" type="submit">Crear Grafica</button>
-          </form>
-          <div>
-            <br></br>
-            {viewGraph && <MyChart data={data as Data} options={options}/>}
-          </div>
-        </div>
-        <br></br>
-        <input
-          className=""
-          onChange={handleCSV}
-          accept=".csv, .txt"
-          type="file"
-        />
-        <button
-          className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
-          onClick={() => {signOut()}}
-        >
-          Cerrar sesion
-        </button>
-      </main>
-    </>
+      <form
+        onSubmit={handleSubmit}
+      >
+        {xLabels.map(label => {
+          return(
+            <CheckBox
+              formSubmit={formSubmit}
+              label={label}
+              value={label.toLowerCase()}
+              type="xChecks"
+            />
+            );
+          })}
+        {yLabels.map(label => {
+          return(
+            <CheckBox
+              formSubmit={formSubmit}
+              label={label}
+              value={label.toLowerCase()}
+              type="yChecks"
+            />
+          );
+        })}
+        {graphs.map((graph, index) => {
+          if(index>1){
+            return(
+              <MyChart
+                data={graph}
+                options={options}
+              />
+            );
+          }else{
+            return(null);
+          }
+        })}
+        <Button
+          type="submit"
+          >Crear Gráfica
+        </Button>
+      </form>
+    </div>
   );
-};
+}
 
-export default Home;
-
-// const AuthShowcase: React.FC = () => {
-//   const { data: sessionData } = useSession();
-
-//   const { data: secretMessage } = api.example.getSecretMessage.useQuery(
-//     undefined, // no input
-//     { enabled: sessionData?.user !== undefined }
-//   );
-
-//   return (
-//     <div className="flex flex-col items-center justify-center gap-4">
-//       <p className="text-center text-2xl text-white">
-//         {sessionData && <span>Logged in as {sessionData.user?.name}</span>}
-//         {secretMessage && <span> - {secretMessage}</span>}
-//       </p>
-//       <button
-//         className="rounded-full bg-white/10 px-10 py-3 font-semibold text-white no-underline transition hover:bg-white/20"
-//         onClick={sessionData ? () => void signOut() : () => void signIn()}
-//       >
-//         {sessionData ? "Sign out" : "Sign in"}
-//       </button>
-//     </div>
-//   );
-// };
+export default Home2;
