@@ -14,7 +14,7 @@ export const searchRouter = createTRPCRouter({
             //Hay que checar que nos regresa la query si no encuentra el dato
             const retrievedRecords = await prisma.employee.findMany({ where: {
                 OR: [
-                    {id: {contains: given_ID}},
+                    {employeeID: {contains: given_ID}},
                     {employeeArea: {contains:<string>given_ID}}
             ]}});
             if(!retrievedRecords){
