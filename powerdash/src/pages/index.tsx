@@ -260,7 +260,7 @@ const Home2: NextPageWithLayout = (): JSX.Element => {
   return (
     <div>
       <form onSubmit={handleSubmit}>
-        <div className={"bg-gray-100 p-4"}>
+        <div className={"m-2 w-fit rounded-md bg-gray-100 p-4"}>
           <div className={"flex items-center space-x-3"}>
             <div>
               {xLabels.map((label, index) => {
@@ -291,7 +291,7 @@ const Home2: NextPageWithLayout = (): JSX.Element => {
           </div>
           <Button
             type="submit"
-            variant={"default"}
+            variant={"secondary"}
             className={"mt-3 bg-gray-300"}
           >
             Crear Gráfica
