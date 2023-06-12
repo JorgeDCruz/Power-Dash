@@ -3,6 +3,7 @@ import { authRouter } from "~/server/api/routers/authenticationRoute";
 import { CSV_Router } from "./routers/readCSV";
 import { searchRouter } from "./routers/searchData";
 import { crudRouter } from "./routers/crudRoute";
+import { graphRouter } from "./routers/graphRoute";
 import { certificationCrudRouter } from "./routers/certiCrudRoute";
 
 /**
@@ -15,6 +16,7 @@ export const appRouter = createTRPCRouter({
   CSV: CSV_Router,
   search: searchRouter,
   CRUDrouter: crudRouter,
+  gData: graphRouter,
   certCRUD: certificationCrudRouter,
 });
 
