@@ -1,12 +1,137 @@
-import { GetServerSideProps, InferGetServerSidePropsType } from "next";
+
+// import { handleCSV } from "~/utils/functions";
+import {
+  FormEventHandler,
+  useState,
+  useEffect,
+  useRef,
+  type FC,
+  type ChangeEvent,
+  type SetStateAction,
+  type Dispatch,
+  type FormEvent
+} from "react";
+import { GetServerSideProps, type NextPage } from "next";
 import Head from "next/head";
-import { ChangeEvent } from "react";
+import { useSession, signOut } from "next-auth/react";
 import { api } from "~/utils/api";
-import { getFile } from "~/utils/aws/S3_Bucket";
-import { CertificationForm, GeneralLayout } from "~/components";
-import { NextPageWithLayout } from "~/pages/page";
-import { authOptions } from "~/server/auth";
+import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend } from 'chart.js';
+import { Bar } from 'react-chartjs-2';
+import { Input, Button } from "~/components"
+import { cn } from "~/lib/utils";
+import { set } from "cypress/types/lodash";
+import { setgroups } from "process";
+import type { ReturnData } from "~/server/api/routers/graphRoute"
 import { getServerSession } from "next-auth";
+import { authOptions } from "~/server/auth";
+
+const xLabels: string[] = [
+  "Java",
+  "C++",
+  "Javascript",
+  "Rust"
+];
+
+const yLabels: string[] = [
+  "Go",
+  "C",
+  "TypeScript",
+  "Ruby"
+];
+
+interface CheckBoxProps {
+  className?: string;
+  value: string;
+  label: string;
+  type: "xChecks" | "yChecks";
+  formSubmit: boolean;
+}
+
+const CheckBox: FC<CheckBoxProps> = ({className, value, label, type, formSubmit}): JSX.Element => {
+  const [check, setCheck] = useState<boolean>(false);
+  const ref = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    reset();
+  }, [formSubmit]);
+
+  const reset = (): void => setCheck(false);
+
+  const handleChange = (e: ChangeEvent<HTMLInputElement>): void => {
+    setCheck(prev => !prev);
+  }
+  return(
+    <>
+      <input
+        ref={ref}
+        className={cn([``, className])}
+        value={check? value : undefined}
+        name={value}
+        id={type==="xChecks"? "xChecks" : "yChecks"}
+        type="checkbox"
+        onChange={handleChange}
+        checked={check}
+      />
+      <label>{label}</label>
+    </>
+  );
+};
+
+interface IOptions {
+  responsive: boolean;
+  plugins: {
+    legend: {
+      position: "top";
+    },
+    title: {
+      display: boolean;
+      text: string;
+    }
+  }
+}
+
+interface MyChartProps {
+  data: GraphData;
+  options: IOptions;
+}
+
+const MyChart: FC<MyChartProps> = ({data, options}) => {
+  return (
+    <div>
+      <h2>Certification Chart</h2>
+      <Bar data={data} options={options} />
+    </div>
+  );
+};
+
+interface AxisSelect {
+  x: string[];
+  y: string[];
+}
+
+interface GraphBarData {
+  label: string;
+  data: number[];
+  backgroundColor: string;
+}
+
+interface GraphData {
+  labels: string[];
+  datasets: GraphBarData[];
+}
+
+const options = {
+  responsive: true,
+  plugins: {
+    legend: {
+      position: 'top' as const,
+    },
+    title: {
+      display: true,
+      text: "Certifications",
+    },
+  },
+}
 
 
 export const getServerSideProps: GetServerSideProps = async ({ req, res }) => {
@@ -20,76 +145,141 @@ export const getServerSideProps: GetServerSideProps = async ({ req, res }) => {
     },
   };
 };
-const Home: NextPageWithLayout<
-  InferGetServerSidePropsType<typeof getServerSideProps>
-> = (props) => {
-  //Obtenemos los datos de la sesión actual a través de next-login "useSession"
+
+const Home2: NextPage = (): JSX.Element => {
+  const { data: session, status } = useSession();
+  const [axisSelect, setAxisSelect] = useState<AxisSelect[]>([]);
+  const [formSubmit, setFormSubmit] = useState<boolean>(false);
+
+
+
+
+  const [graphs, setGraphs] = useState<GraphData[]>([]);
+  const [graphIndex, setGraphIndex] = useState<number>(0);
+  const [graphBarValues, setGraphBarValues] = useState<ReturnData>({});
 
   const mutation = api.CSV.CSV_Upload.useMutation();
-
+  const graphMutation = api.gData.dataGraph.useMutation();
   const bucketName = "ibmcsv";
 
-
-
-  const handleCSV = async (e: ChangeEvent<HTMLInputElement>) => {
-    const input: FileList | null = e.target.files;
-    if (input) {
-      const file: File | undefined = input[0];
-
-      try {
-        //GetFile nos regresará el contenido del csv como un string
-        const responseData: string = await getFile(
-          bucketName,
-          file?.name as string
-        );
-        mutation.mutate(responseData);
-      } catch (error) {
-        //Si llegase a dar un error en la obtención del archivo, se utilizará el local
-        console.log("Error retrieving the object: ", error);
-        console.log("Using the locally given file instead");
-        let text: string;
-        const reader = new FileReader();
-        reader.onload = (e: ProgressEvent<FileReader>): void => {
-          text = e.target?.result as string;
-          console.log("Text: ", text);
-          mutation.mutate(text);
-          console.log("Success");
-          return;
-        };
-        reader.readAsText(file !== undefined ? file : new Blob());
+  useEffect(() => {
+    const getGraphData = async (): Promise<void> => {
+      setGraphBarValues(await graphMutation.mutateAsync({xAxis: "", yAxis: "", type: "", selects: xLabels.length*2}))
+      
+      const graphBarDataX: GraphBarData[] = [];
+      const graphBarDataY: GraphBarData[] = [];
+      
+      axisSelect[graphIndex-1]?.x.forEach((select, index) => {
+        graphBarDataX.push({
+          label: select,
+          data: [graphBarValues[index]] as number[],
+          backgroundColor: 'rgba(255, 99, 132, 0.5)'
+        });
+      });
+      axisSelect[graphIndex-1]?.y.forEach((select, index) => {
+        graphBarDataY.push({
+          label: select,
+          data: [graphBarValues[index+xLabels.length]] as number[],
+          backgroundColor: 'rgba(255, 99, 132, 0.5)'
+        });
+      });
+      
+      const graphBarDataFull: GraphBarData[] = [...graphBarDataX, ...graphBarDataY];
+      const currentGraph: GraphData = {
+        labels: ["Certificados"],
+        datasets: graphBarDataFull
       }
-      let text: string;
 
-      const reader = new FileReader();
-      reader.onload = (e: ProgressEvent<FileReader>): void => {
-        text = e.target?.result as string;
-        mutation.mutate(text);
-        console.log("Success");
-        return;
-      };
-      reader.readAsText(file ? file : new Blob());
+      setGraphs(prev => [...prev, currentGraph]);
     }
-    return;
-  };
+    getGraphData();
+  }, [formSubmit]);
+  
+  const getAxisValues = (axis: "x" | "y", elements: Element[]): string[] => {
+    if(axis === "x"){
+      const xValues = elements.map(element => {
+          if(element.attributes.item(2)?.value === "xChecks"){
+            return element.attributes.item(4)?.value;
+          }
+        })
+        return xValues.filter(current => (current!==undefined && current!=="")) as string[];
+      }else{
+        const yValues = elements.map(element => {
+          if(element.attributes.item(2)?.value === "yChecks"){
+            return element.attributes.item(4)?.value;
+          }
+        })
+        return yValues.filter(current => (current!==undefined && current!=="")) as string[];
+      }
+    }
+    
+    const handleSubmit: FormEventHandler = async (e: FormEvent<HTMLInputElement>): Promise<void> => {
+      e.preventDefault();
 
-  return (
-    <>
-      <Head>
-        <title>Dashboard IBM </title>
-        <meta name="description" content="Generated by create-t3-app" />
-        <link
-          rel="icon"
-          href="https://cdn-icons-png.flaticon.com/512/5969/5969083.png"
-        />
-      </Head>
-      <main className="flex min-h-screen flex-col items-center justify-center">
-        <CertificationForm show={true} />
-      </main>
-    </>
+      const inputValues: Element[] = Array.from(e.currentTarget.getElementsByTagName("input"));
+      setFormSubmit(prev => !prev);
+      setGraphIndex(prev => ++prev);
+      setAxisSelect((prev) => {
+        return [
+          ...prev,
+          {
+            x: getAxisValues("x", inputValues),
+            y: getAxisValues("y", inputValues)
+          }]
+        }
+      );  
+    }
+  
+  ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
+    
+    return(
+      <div>
+      <form
+        onSubmit={handleSubmit}
+      >
+        {xLabels.map((label, index) => {
+          return(
+            <CheckBox
+            key = {index}
+              formSubmit={formSubmit}
+              label={label}
+              value={label.toLowerCase()}
+              type="xChecks"
+            />
+            );
+          })}
+        {yLabels.map((label, index) => {
+          return(
+            <CheckBox
+              key = {index}
+              formSubmit={formSubmit}
+              label={label}
+              value={label.toLowerCase()}
+              type="yChecks"
+            />
+          );
+        })}
+        {graphs.map((graph, index) => {
+          if(index>1){
+            return(
+              <MyChart  
+                key = {index}
+                data={graph}
+                options={options}
+              />
+            );
+          }else{
+            return(null);
+          }
+        })}
+        <Button
+          type="submit"
+          >Crear Gráfica
+        </Button>
+      </form>
+    </div>
   );
-};
+}
 
-Home.getLayout = (page) => (
-  <GeneralLayout userName={page.props.user.name}>{page}</GeneralLayout>
-);
-export default Home;
+export default Home2;
+
