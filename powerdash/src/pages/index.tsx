@@ -1,3 +1,4 @@
+
 // import { handleCSV } from "~/utils/functions";
 import {
   FormEventHandler,
@@ -135,6 +136,19 @@ const Home2: NextPage = (): JSX.Element => {
   const [axisSelect, setAxisSelect] = useState<AxisSelect[]>([]);
   const [formSubmit, setFormSubmit] = useState<boolean>(false);
 
+export const getServerSideProps: GetServerSideProps = async ({ req, res }) => {
+  const session = await getServerSession(req, res, authOptions);
+
+  session && session.user.image === undefined && (session.user.image = null);
+
+  return {
+    props: {
+      user: session?.user,
+    },
+  };
+};
+
+
   const [graphs, setGraphs] = useState<GraphData[]>([]);
   const [graphIndex, setGraphIndex] = useState<number>(0);
   const [graphBarValues, setGraphBarValues] = useState<ReturnData>({});
@@ -260,3 +274,4 @@ const Home2: NextPage = (): JSX.Element => {
 }
 
 export default Home2;
+
