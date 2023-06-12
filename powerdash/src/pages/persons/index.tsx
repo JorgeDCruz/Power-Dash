@@ -4,6 +4,7 @@ import {
   GeneralLayout,
   Button,
   ModalEmployeeForm,
+  CertificationForm,
   Searchbar,
   CardForm,
   CardContainer,
@@ -12,88 +13,112 @@ import { AddUser } from "~/assets";
 import { api } from "~/utils/api";
 import { idGenerator } from "~/lib/utils";
 import { Employee } from "@prisma/client";
+import { GetServerSideProps } from "next";
+import { getServerSession } from "next-auth";
+import { authOptions } from "~/server/auth";
+
+
 
 interface IEmployee {
   name: string;
 }
-const test: IEmployee[] = [
-  { name: "El PEPE" },
-  { name: "ETESETCH" },
-  { name: "TILIN" },
-  { name: "Vicente Javier Viera Guízar" },
-  { name: "5" },
-  { name: "6" },
-];
+const result_search_data: IEmployee[] = [];
+
+
+export const getServerSideProps: GetServerSideProps = async ({ req, res }) => {
+  const session = await getServerSession(req, res, authOptions);
+
+  session && session.user.image === undefined && (session.user.image = null);
+
+  return {
+    props: {
+      user: session?.user,
+    },
+  };
+};
+
 
 const Persons: NextPageWithLayout = (): JSX.Element => {
   const [topic, setTopic] = useState<string>("");
   const [modal, setModal] = useState<boolean>(false);
-
+  const [modal_certification, setModal_certification] = useState<boolean>(false);
+  const [employeesState, setEmployees] = useState<IEmployee[]>(result_search_data);
   const mutation = api.search.searchData.useMutation();
 
   useEffect(() => {
     //Hay que cambiar el "any" por el tipo del "onChange"s
     const fetchData = async <onChange,>(): Promise<void> => {
-      console.log(topic);
       const data = await mutation.mutateAsync(topic);
-      console.log("Data: ", data[0]?.employeeID);
+      const result_data_size = data.length;
+      
+      const new_result_search_data: IEmployee[] = [];
+
+      for(let i = 0; i < result_data_size; i++){
+        const arrayData: IEmployee = {name: data[i]?.employeeID as string};
+        new_result_search_data.push(arrayData);
+      }
+      setEmployees(new_result_search_data);
     };
     fetchData();
   }, [topic]);
 
+  useEffect(() => {
+    console.log(employeesState);
+  }, [employeesState]);
+
   return (
     <div className="h-screen w-full sm:overflow-hidden">
       <ModalEmployeeForm show={modal} className="h-5/6 w-3/4" />
+      <CertificationForm show={modal_certification} className="h-5/6 w-3/4"/>
       <Searchbar
         className="mx-auto mt-8"
-        searchTopics={[
-          "AWAaaaaaaaa",
-          "OWO",
-          "UWU",
-          "7U7",
-          "UNU",
-          "T_T",
-          ":3",
-          "EWE",
-        ]}
+        searchTopics={["Nombre"]}
         setTopic={setTopic}
       />
-      <Button
-        // after="Agregar Empleado"
-        onClick={() => setModal((prev) => !prev)}
-        className="
-                    ease after:text-xm
-                    group
-                    h-10
-                    w-fit bg-[#f2f4f8] text-[#0f62fe]
-                    transition-all
-                    duration-200
-                    after:line-clamp-1
-                    after:w-fit
-                    after:text-clip
-                    after:font-medium hover:bg-[#dde1e6] hover:shadow-md hover:after:text-[#0043ce]
-                    sm:w-[30%] sm:after:content-[attr(after)]"
-      >
-        <AddUser
-          className="
+      <div className={"my-3 flex items-center justify-center"}>
+        <Button
+          // after="Agregar Empleado"
+          className="mr-5"
+          onClick={() => setModal((prev) => !prev)}
+        >
+          <AddUser
+            className="
                         ease h-full w-fit
                         min-w-[50px]
                         fill-[#0f62fe] transition-all duration-200
                         group-hover:fill-[#0043ce]"
-        />
-      </Button>
+          />
+        </Button>
+
+        <Button
+          // after="Agregar Empleado"
+          onClick={() => setModal_certification((prev) => !prev)}
+        >
+          <AddUser
+            className="
+                        ease h-full w-fit
+                        min-w-[50px]
+                        fill-[#0f62fe] transition-all duration-200
+                        group-hover:fill-[#0043ce]"
+          />
+        </Button>
+
+      </div>
+
       <div
         className="
-                mt-8 flex
+              flex
                 h-full
                 w-full items-start"
       >
         <CardContainer>
           <>
-            {test.map((employee) => (
+            {employeesState.map((employees) => (
               <CardForm
+                setEmployees={setEmployees}
+                EmployeesState={employeesState}
                 key={idGenerator()}
-                employee={employee}
+                employee={employees}
                 className="
                                     mx-auto my-3
                                     h-1/6 w-11/12"
@@ -107,7 +132,7 @@ const Persons: NextPageWithLayout = (): JSX.Element => {
 };
 
 Persons.getLayout = (page) => (
-  <GeneralLayout userName={`Jorge Plasencia`}>{page}</GeneralLayout>
+  <GeneralLayout userName={page.props.user.name}>{page}</GeneralLayout>
 );
 
 export default Persons;
