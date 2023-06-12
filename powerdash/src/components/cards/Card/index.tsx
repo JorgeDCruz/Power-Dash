@@ -18,6 +18,7 @@ interface CardProps extends React.HTMLAttributes<HTMLDivElement> {
   setEmployees: Dispatch<SetStateAction<IEmployee[]>>;
 }
 
+//Modified type for deploy
 const Card = React.forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivElement>>(
   ({ className, ...props }, ref) => (
     <div
