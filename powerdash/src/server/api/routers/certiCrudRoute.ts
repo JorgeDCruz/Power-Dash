@@ -64,7 +64,7 @@ const createOrAddCertification = async (_certification: z.infer<typeof addCertif
                         certificationName: _certification.certificationName,
                         certificationProvider: <string>_certification.certificationProvider,
                         certificationStatus: <boolean>_certification.certificationStatus,
-                        certificationType:<string> _certification.certificationType,
+                        certificationType: <string> _certification.certificationType,
                         expirationDate: <Date>_certification.expirationDate,
                         marketCertification: _certification.marketCertification,
                     },
@@ -81,7 +81,7 @@ export const certificationCrudRouter = createTRPCRouter({
         .mutation(async (req) => {
             const { input } = req;
             const insertCertification = createOrAddCertification(input)
-            console.log(insertCertification);
+            // console.log(insertCertification);
             return insertCertification;
         }),
     readCertification: protectedProcedure
@@ -110,7 +110,7 @@ export const certificationCrudRouter = createTRPCRouter({
                     expirationDate: input.expirationDate,
                 }
             });
-            console.log(updtCertification);
+            // console.log(updtCertification);
             return updtCertification;
         }),
     deleteCertification: protectedProcedure
@@ -119,6 +119,6 @@ export const certificationCrudRouter = createTRPCRouter({
             const deleteCertification = await prisma.certification.delete({
                 where: {id: input}
             });
-            console.log(deleteCertification);
+            // console.log(deleteCertification);
         })
 })
