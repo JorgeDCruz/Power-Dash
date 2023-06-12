@@ -9,9 +9,7 @@ const CertificationFormSchema: z.ZodSchema = z
       .max(50)
       .nonempty("Este Campo es Obligatorio"),
     certificationStatus: z.coerce
-      .string()
-      .max(50)
-      .nonempty("Este Campo es Obligatorio"),
+      .boolean(),
     certificationType: z.coerce
       .string()
       .max(50)

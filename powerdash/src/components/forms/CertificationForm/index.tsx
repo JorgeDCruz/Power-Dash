@@ -27,23 +27,23 @@ const fieldNames: string[] = [
 ];
 
 const placeholders: string[] = [
-  "ID de la certificación",
+  "ID del empleado",
   "Nombre de la certificación",
   "Proveedor de la certificación",
   "Estado de la certificación",
   "Tipo de certificación",
   "Fecha de expiración",
-  "Mercado de la certificación",
+  "Certificación del mercado",
 ];
 
 const labels: string[] = [
-  "ID de la certificación",
+  "ID del empleado",
   "Nombre de la certificación",
   "Proveedor de la certificación",
   "Estado de la certificación",
   "Tipo de certificación",
   "Fecha de expiración",
-  "Mercado de la certificación",
+  "Certificación del mercado",
 ];
 
 const CertificationForm: FC<CertificationFormProps> = ({
@@ -61,10 +61,10 @@ const CertificationForm: FC<CertificationFormProps> = ({
       certificationID: "",
       certificationName: "",
       certificationProvider: "",
-      certificationStatus: "",
+      certificationStatus: false,
       certificationType: 0,
       expirationDate: "",
-      certificationMarket: "",
+      certificationMarket: false,
     },
   });
 
