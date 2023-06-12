@@ -16,18 +16,12 @@ import { Employee } from "@prisma/client";
 interface IEmployee {
   name: string;
 }
-const test: IEmployee[] = [
-  { name: "Jorge Plasencia" },
-  { name: "Jairo Barrera" },
-  { name: "Jorge Cruz" },
-  { name: "Vicente Javier Viera Guízar" },
-  { name: "Sidd Lopez" },
-];
+const result_search_data: IEmployee[] = [];
 
 const Persons: NextPageWithLayout = (): JSX.Element => {
   const [topic, setTopic] = useState<string>("");
   const [modal, setModal] = useState<boolean>(false);
-  const [employeesState, setEmployees] = useState<IEmployee[]>(test);
+  const [employeesState, setEmployees] = useState<IEmployee[]>(result_search_data);
   const mutation = api.search.searchData.useMutation();
 
   useEffect(() => {
@@ -35,6 +29,13 @@ const Persons: NextPageWithLayout = (): JSX.Element => {
     const fetchData = async <onChange,>(): Promise<void> => {
       console.log(topic);
       const data = await mutation.mutateAsync(topic);
+      const result_data_size = data.length;
+      
+      for(let i = 0; i < result_data_size; i++){
+        const arrayData: IEmployee = {name: data[i]?.employeeID as string};
+        result_search_data.push(arrayData);
+      }
+      setEmployees(result_search_data);
       console.log("Data: ", data[0]?.employeeID);
     };
     fetchData();
