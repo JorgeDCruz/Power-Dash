@@ -17,18 +17,17 @@ interface IEmployee {
   name: string;
 }
 const test: IEmployee[] = [
-  { name: "El PEPE" },
-  { name: "ETESETCH" },
-  { name: "TILIN" },
+  { name: "Jorge Plasencia" },
+  { name: "Jairo Barrera" },
+  { name: "Jorge Cruz" },
   { name: "Vicente Javier Viera Guízar" },
-  { name: "5" },
-  { name: "6" },
+  { name: "Sidd Lopez" },
 ];
 
 const Persons: NextPageWithLayout = (): JSX.Element => {
   const [topic, setTopic] = useState<string>("");
   const [modal, setModal] = useState<boolean>(false);
-
+  const [employeesState, setEmployees] = useState<IEmployee[]>(test);
   const mutation = api.search.searchData.useMutation();
 
   useEffect(() => {
@@ -41,59 +40,47 @@ const Persons: NextPageWithLayout = (): JSX.Element => {
     fetchData();
   }, [topic]);
 
+  useEffect(() => {
+    console.log(employeesState);
+  }, [employeesState]);
+
   return (
     <div className="h-screen w-full sm:overflow-hidden">
       <ModalEmployeeForm show={modal} className="h-5/6 w-3/4" />
       <Searchbar
         className="mx-auto mt-8"
-        searchTopics={[
-          "AWAaaaaaaaa",
-          "OWO",
-          "UWU",
-          "7U7",
-          "UNU",
-          "T_T",
-          ":3",
-          "EWE",
-        ]}
+        searchTopics={["Nombre"]}
         setTopic={setTopic}
       />
-      <Button
-        // after="Agregar Empleado"
-        onClick={() => setModal((prev) => !prev)}
-        className="
-                    ease after:text-xm
-                    group
-                    h-10
-                    w-fit bg-[#f2f4f8] text-[#0f62fe]
-                    transition-all
-                    duration-200
-                    after:line-clamp-1
-                    after:w-fit
-                    after:text-clip
-                    after:font-medium hover:bg-[#dde1e6] hover:shadow-md hover:after:text-[#0043ce]
-                    sm:w-[30%] sm:after:content-[attr(after)]"
-      >
-        <AddUser
-          className="
+      <div className={"my-3 flex items-center justify-center"}>
+        <Button
+          // after="Agregar Empleado"
+          onClick={() => setModal((prev) => !prev)}
+        >
+          <AddUser
+            className="
                         ease h-full w-fit
                         min-w-[50px]
                         fill-[#0f62fe] transition-all duration-200
                         group-hover:fill-[#0043ce]"
-        />
-      </Button>
+          />
+        </Button>
+      </div>
+
       <div
         className="
-                mt-8 flex
+              flex
                 h-full
                 w-full items-start"
       >
         <CardContainer>
           <>
-            {test.map((employee) => (
+            {employeesState.map((employees) => (
               <CardForm
+                setEmployees={setEmployees}
+                EmployeesState={employeesState}
                 key={idGenerator()}
-                employee={employee}
+                employee={employees}
                 className="
                                     mx-auto my-3
                                     h-1/6 w-11/12"
