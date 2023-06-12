@@ -124,7 +124,11 @@ const Crud: NextPageWithLayout = (): JSX.Element => {
           <input type="text" placeholder="technologies" />
         </div>
 
-        <Button className={`mt-4`} type={`submit`} variant={`ghost`}>
+        <Button
+          className={`mt-4`}
+          type={`submit`}
+          variant={`ghost`}
+        >
           Iniciar sesión
         </Button>
       </form>
