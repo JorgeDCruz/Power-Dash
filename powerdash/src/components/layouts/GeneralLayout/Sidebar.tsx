@@ -7,7 +7,6 @@ import { signOut } from "next-auth/react";
 import { useRouter } from "next/router";
 import { getFile, insertFile } from "~/utils/aws/S3_Bucket";
 import { router } from "@trpc/server";
-import { useRouter } from "next/router";
 
 interface SidebarProps {
   userName: string;
