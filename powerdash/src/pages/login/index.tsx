@@ -66,11 +66,10 @@ const Login: NextPageWithLayout = (): JSX.Element => {
               />
             </div>
           </div>
-
           <Button className={`mb-2 mt-4`} type={`submit`}>
             Iniciar sesión
           </Button>
-          <Button variant={"link"} onClick={() => router.push("/register")}>
+          <Button onClick={() => router.push("/register") } type={"button"} variant={"link"} className="text-gray-950">
             Registrate
           </Button>
         </form>

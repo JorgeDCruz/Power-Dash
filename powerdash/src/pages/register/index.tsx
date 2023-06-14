@@ -76,7 +76,7 @@ const Index: NextPage = (): JSX.Element => {
         <Button className={`mb-2 mt-4`} type={`submit`}>
           Crear cuenta
         </Button>
-        <Button variant={"link"} onClick={() => router.push("/login")}>
+        <Button variant={"link"} onClick={() => router.push("/login")} className="text-gray-950" type="button">
           Iniciar sesión
         </Button>
       </form>
